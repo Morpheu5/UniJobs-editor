@@ -1,9 +1,15 @@
 module.exports = {
-  root: true,
+  parserOptions: {
+    parser: 'babel-eslint',
+    ecmaVersion: 2017,
+    sourceType: 'module'
+  },
   env: {
     browser: true,
-    node: true
+    node: true,
+    es6: true
   },
+  root: true,
   extends: [
     'plugin:vue/essential',
     // '@vue/prettier'
@@ -20,7 +26,4 @@ module.exports = {
     'vue/attributes-order': 'error',
     'vue/order-in-components': 'error'
   },
-  parserOptions: {
-    parser: 'babel-eslint'
-  }
 }

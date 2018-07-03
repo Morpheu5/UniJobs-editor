@@ -17,28 +17,37 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
     props: {
         contentId: {
             type: String,
             required: true
         },
-        data: {
+        value: {
             type: Object,
             required: true
         }
     },
     data: function() {
         return {
-            block_data: this.data
+            block_data: _.merge({
+                block_type: 'text',
+                uuid: 'uuidv4()',
+                body: {
+                    en: { content: '' },
+                    it: { content: '' }
+                }
+            }, this.value)
         };
     },
-    created() {
-        if (!this.block_data.body) {
-            this.block_data.body = {
-                it: { content: "" },
-                en: { content: "" }
-            };
+    watch: {
+        block_data: {
+            handler: function() {
+                this.$emit('input', this.block_data)
+            },
+            deep: true
         }
     }
 };

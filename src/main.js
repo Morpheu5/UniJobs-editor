@@ -32,6 +32,7 @@ const router = new VueRouter({
     routes
 });
 
+// eslint-disable-next-line
 let vm = new Vue({
     store,
     router,

@@ -47,7 +47,7 @@ export default {
                 this.jobs = [];
                 this.$root.$emit("global-notification", {
                     type: "danger",
-                    message: "There was a problem retrieving the list of jobs."
+                    message: `There was a problem retrieving the list of jobs.<br/>${error}`
                 });
         });
     }

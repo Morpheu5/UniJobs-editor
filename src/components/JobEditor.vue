@@ -7,7 +7,7 @@
         </b-row>
         <b-row v-if="job">
             <b-col>
-                <b-row class="mt-3">
+                <!-- <b-row class="mt-3">
                     <b-col>
                         <h3>Title</h3>
                         <b-card no-body>
@@ -21,9 +21,9 @@
                             </b-tabs>
                         </b-card>
                     </b-col>
-                </b-row>
+                </b-row> -->
 
-                <div v-for="block in job.content_blocks" :key="block.uuid" class="content_block mt-5">
+                <div v-for="(block, i) in job.content_blocks" :key="block.uuid" class="content_block mt-5">
                     <b-row>
                         <b-col>
                             <div class="float-left">
@@ -35,7 +35,9 @@
                         </b-col>
                     </b-row>
                     <b-row class="mt-2">
-                        <component :data="block" :contentId="id" :is="contentTypeToComponentName(block.block_type)" />
+
+                        <component v-model="job.content_blocks[i]" :contentId="id" :is="contentTypeToComponentName(block.block_type)" />
+
                     </b-row>
                 </div>
 
@@ -86,7 +88,8 @@ export default {
     },
     data() {
         return {
-            job: null
+            job: null,
+            showBlocks: false,
         };
     },
     created() {
@@ -109,16 +112,12 @@ export default {
                 ...this.job.content_blocks,
                 {
                     block_type: block_type,
-                    uuid: uuidv4(),
-                    order:
-                        this.job.content_blocks.length === 0
-                            ? 1
-                            : _.last(this.job.content_blocks).order + 1
+                    uuid: uuidv4()
                 }
             ];
         },
         saveJob() {
-            let requests = [];
+            const requests = [];
             for (let content_block of this.job.content_blocks) {
                 let cb_params = { data: _.omit(content_block, ["id", "uuid"]) };
                 requests.push(
