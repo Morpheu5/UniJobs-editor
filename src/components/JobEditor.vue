@@ -12,11 +12,11 @@
                         <h3>Title</h3>
                         <b-card no-body>
                             <b-tabs card>
-                                <b-tab v-for="l in ['it', 'en']" :key="`title-${l}`">
+                                <b-tab v-for="l in availableLocales" :key="`title-${l.code}`">
                                     <template slot="title">
-                                        {{ l.toUpperCase() }} <span v-show="!job.title[l] || job.title[l] == ''" class="missing">(missing)</span>
+                                        {{ l.name }} <span v-show="!job.title[l.code] || job.title[l.code] == ''" class="missing">(missing)</span>
                                     </template>
-                                    <b-form-input v-model="job.title[l]" type="text" placeholder="Enter a title" />
+                                    <b-form-input v-model="job.title[l.code]" type="text" placeholder="Enter a title" />
                                 </b-tab>
                             </b-tabs>
                         </b-card>
@@ -30,7 +30,9 @@
                                 <h4>block type: {{ block.block_type }}</h4>
                             </div>
                             <div class="float-right">
-                                <b-button variant="danger" size="sm">&times;</b-button>
+                                <span v-show="block.delete" class="text-danger">This block will be deleted when you save the document. </span>
+                                <b-button v-show="block.delete" variant="success" size="sm" @click="block.delete = false">&circlearrowleft;</b-button>
+                                <b-button v-show="!block.delete" variant="danger" size="sm" @click="block.delete = true">&times;</b-button>
                             </div>
                         </b-col>
                     </b-row>
@@ -46,7 +48,7 @@
                         <b-col>
                             <p class="text-center">
                                 <b-dropdown text="Add a block of type " size="sm" class="ml-2" variant="success">
-                                    <b-dropdown-item v-for="t in ['text']" :key="t" @click="addBlock(t)">
+                                    <b-dropdown-item v-for="t in ['text']" :key="t" @click="addContentBlock(t)">
                                         {{ t[0].toUpperCase() + t.slice(1) }}
                                     </b-dropdown-item>
                                 </b-dropdown>
@@ -96,6 +98,16 @@ export default {
             .get(`/contents/${this.id}`)
             .then(response => {
                 this.job = response.data;
+                // Add the "delete" property on the fly otherwise stuff will not bind to it.
+                let q = _.clone(this.job.content_blocks);
+                let i = 0;
+                while (i < q.length) {
+                    q[i].delete = false;
+                    if (q[i].content_blocks) {
+                        q.push(_.clone(q[i].content_blocks));
+                    }
+                    i += 1
+                }
             })
             .catch(error => {
                 this.job = null;
@@ -106,7 +118,7 @@ export default {
         });
     },
     methods: {
-        addBlock(blockType) {
+        addContentBlock(blockType) {
             this.job.content_blocks = [
                 ...this.job.content_blocks,
                 {
@@ -122,10 +134,16 @@ export default {
             // Prepare the requests for the content_blocks
             for (const contentBlock of this.job.content_blocks) {
                 const contentBlockParams = { data: _.omit(contentBlock, ["id"]) };
-                const contentBlockMethod = contentBlock.id ? 'patch' : 'post';
+                let contentBlockMethod;
+                if (contentBlock.delete) { // FIXME This doesn't work when block is created AND deleted at the same time.
+                    contentBlockMethod = 'delete';
+                    contentBlockParams = null;
+                } else {
+                    contentBlockMethod = contentBlock.id ? 'patch' : 'post';
+                }
                 requests.push(
                     this.$axios[contentBlockMethod](
-                        `/contents/${this.id}/content_blocks/${content_block.id || ''}`,
+                        `/contents/${this.id}/content_blocks/${contentBlock.id || ''}`,
                         contentBlockParams
                     )
                 );
@@ -142,7 +160,7 @@ export default {
             );
 
             Promise.all(requests)
-                .then(response => {
+                .then(() => {
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: "Job saved correctly."

@@ -39,6 +39,14 @@ const router = new VueRouter({
     routes
 });
 
+Vue.mixin({
+    computed: {
+        availableLocales() {
+            return [ { code: "it", name: "Italiano" }, { code: "en", name: "English" } ]
+        }
+    }
+})
+
 // eslint-disable-next-line
 const vm = new Vue({
     store,

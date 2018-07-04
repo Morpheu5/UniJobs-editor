@@ -2,13 +2,13 @@
     <b-col>
         <b-card no-body>
             <b-tabs card>
-                <b-tab v-for="l in ['it', 'en']" :key="`${block_data.uuid}-${l}`">
+                <b-tab v-for="l in availableLocales" :key="`${block_data.uuid}-${l.code}`">
                     <template slot="title">
-                        {{ l.toUpperCase() }} <span v-show="!block_data.body[l] || block_data.body[l] == ''" class="missing">(missing)</span>
+                        {{ l.name }} <span v-show="!block_data.body[l.code] || block_data.body[l.code] == ''" class="missing">(missing)</span>
                     </template>
-                    <b-form-textarea v-model="block_data.body[l].content" rows="6" />
+                    <b-form-textarea v-model="block_data.body[l.code].content" :disabled="value.delete" rows="6" />
                     <div class="small mt-3">
-                        <code>{{ { block_type: block_data.block_type, uuid: block_data.uuid, order: block_data.order } }}</code>
+                        <code>{{ { block_type: block_data.block_type, uuid: block_data.uuid, order: value.order, delete: value.delete } }}</code>
                     </div>
                 </b-tab>
             </b-tabs>
@@ -49,6 +49,9 @@ export default {
             },
             deep: true
         }
+    },
+    mounted() {
+        this.$emit('input', this.block_data);
     }
 };
 </script>
