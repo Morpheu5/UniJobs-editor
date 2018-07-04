@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 
+import axios from "axios";
+
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
@@ -21,6 +23,11 @@ Vue.use(VueRouter);
 
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);
+
+// Configure axios so we can use this.$axios
+Vue.prototype.$axios = axios.create({
+    baseURL: process.env.VUE_APP_API_URL || 'http://localhost:3000'
+})
 
 const routes = [
     { path: "/", component: Dashboard },

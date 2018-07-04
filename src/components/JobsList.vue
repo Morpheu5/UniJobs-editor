@@ -29,8 +29,6 @@
 
 
 <script>
-import axios from "axios";
-
 export default {
     data() {
         return {
@@ -38,8 +36,8 @@ export default {
         };
     },
     created() {
-        axios
-            .get("http://localhost:3000/contents?content_type=job")
+        this.$axios
+            .get("/contents?content_type=job")
             .then(response => {
                 this.jobs = response.data;
             })

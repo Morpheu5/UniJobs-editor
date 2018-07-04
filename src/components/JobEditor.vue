@@ -7,7 +7,7 @@
         </b-row>
         <b-row v-if="job">
             <b-col>
-                <!-- <b-row class="mt-3">
+                <b-row class="mt-3">
                     <b-col>
                         <h3>Title</h3>
                         <b-card no-body>
@@ -21,7 +21,7 @@
                             </b-tabs>
                         </b-card>
                     </b-col>
-                </b-row> -->
+                </b-row>
 
                 <div v-for="(block, i) in job.content_blocks" :key="block.uuid" class="content_block mt-5">
                     <b-row>
@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import _ from "lodash";
 import uuidv4 from "uuid/v4";
 
@@ -93,8 +92,8 @@ export default {
         };
     },
     created() {
-        axios
-            .get(`http://localhost:3000/contents/${this.id}`)
+        this.$axios
+            .get(`/contents/${this.id}`)
             .then(response => {
                 this.job = response.data;
             })
@@ -136,10 +135,8 @@ export default {
                 axios.patch(`http://localhost:3000/contents/${this.id}`, job_params)
             );
 
-            axios
-                .all(requests)
+            Promise.all(requests)
                 .then(response => {
-                    response;
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: "Job saved correctly."
