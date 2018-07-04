@@ -40,7 +40,7 @@ const router = new VueRouter({
 });
 
 // eslint-disable-next-line
-let vm = new Vue({
+const vm = new Vue({
     store,
     router,
     render: h => h(App)

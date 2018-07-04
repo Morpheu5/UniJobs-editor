@@ -106,33 +106,39 @@ export default {
         });
     },
     methods: {
-        addBlock(block_type) {
+        addBlock(blockType) {
             this.job.content_blocks = [
                 ...this.job.content_blocks,
                 {
-                    block_type: block_type,
-                    uuid: uuidv4()
+                    block_type: blockType,
+                    uuid: uuidv4(),
+                    order: this.job.content_blocks.length > 0 ? _.last(this.job.content_blocks).order + 1 : 1
                 }
             ];
         },
         saveJob() {
             const requests = [];
-            for (let content_block of this.job.content_blocks) {
-                let cb_params = { data: _.omit(content_block, ["id", "uuid"]) };
+
+            // Prepare the requests for the content_blocks
+            for (const contentBlock of this.job.content_blocks) {
+                const contentBlockParams = { data: _.omit(contentBlock, ["id"]) };
+                const contentBlockMethod = contentBlock.id ? 'patch' : 'post';
                 requests.push(
-                    axios.patch(
-                        `http://localhost:3000/contents/${this.id}/content_blocks/${
-                            content_block.id
-                        }`,
-                        cb_params
+                    this.$axios[contentBlockMethod](
+                        `/contents/${this.id}/content_blocks/${content_block.id || ''}`,
+                        contentBlockParams
                     )
                 );
             }
-            let job_params = {
-                data: _.omit(this.job, ["id", "uuid", "content_blocks"])
-            };
+
+            // Prepare the request for the content
+            const jobParams = { data: _.omit(this.job, ["id", "content_blocks"]) };
+            const jobMethod = this.job.id ? 'patch' : 'post';
             requests.push(
-                axios.patch(`http://localhost:3000/contents/${this.id}`, job_params)
+                this.$axios[jobMethod](
+                    `/contents/${this.id}`,
+                    jobParams
+                )
             );
 
             Promise.all(requests)
