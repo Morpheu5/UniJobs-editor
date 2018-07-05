@@ -51,7 +51,7 @@ export default {
         }
     },
     mounted() {
-        this.$emit('input', this.block_data);
+        // this.$emit('input', this.block_data);
     }
 };
 </script>

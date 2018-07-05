@@ -97,9 +97,9 @@ export default {
         this.$axios
             .get(`/contents/${this.id}`)
             .then(response => {
-                this.job = response.data;
-                // Add the "delete" property on the fly otherwise stuff will not bind to it.
-                let q = _.clone(this.job.content_blocks);
+                // Add the "delete" property on the fly to the response data before assigning it
+                // to the component, otherwise stuff will not bind to it.
+                let q = _.clone(response.data.content_blocks);
                 let i = 0;
                 while (i < q.length) {
                     q[i].delete = false;
@@ -108,6 +108,7 @@ export default {
                     }
                     i += 1
                 }
+                this.job = response.data;
             })
             .catch(error => {
                 this.job = null;
@@ -124,6 +125,7 @@ export default {
                 {
                     block_type: blockType,
                     uuid: uuidv4(),
+                    delete: false,
                     order: this.job.content_blocks.length > 0 ? _.last(this.job.content_blocks).order + 1 : 1
                 }
             ];
