@@ -12,7 +12,7 @@
                         <h3>Title</h3>
                         <b-card no-body>
                             <b-tabs card>
-                                <b-tab v-for="l in availableLocales" :key="`title-${l.code}`">
+                                <b-tab v-for="l in availableLocales()" :key="`title-${l.code}`">
                                     <template slot="title">
                                         {{ l.name }} <span v-show="!job.title[l.code] || job.title[l.code] == ''" class="missing">(missing)</span>
                                     </template>
@@ -57,12 +57,17 @@
                     </b-row>
                 </div>
             </b-col>
+
             <b-col class="sidebar" cols="4">
                 <b-card>
                     <template slot="header">
                         <h6 class="m-0">Meta</h6>
                     </template>
+                    
                     <b-form-checkbox id="published" v-model="job.metadata.published">Published</b-form-checkbox>
+
+                    <job-metadata v-model="job.metadata" />
+
                     <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p>
                     <template slot="footer">
                         <div class="float-right">
@@ -80,7 +85,12 @@
 import _ from "lodash";
 import uuidv4 from "uuid/v4";
 
+import JobMetadata from "./content_metadata/JobMetadata";
+
 export default {
+    components: {
+        JobMetadata
+    },
     props: {
         id: {
             type: String,

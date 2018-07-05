@@ -40,9 +40,12 @@ const router = new VueRouter({
 });
 
 Vue.mixin({
-    computed: {
+    methods: {
         availableLocales() {
             return [ { code: "it", name: "Italiano" }, { code: "en", name: "English" } ]
+        },
+        spreadOverLocales(o) {
+            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _.cloneDeep(o)}), {})
         }
     }
 })
