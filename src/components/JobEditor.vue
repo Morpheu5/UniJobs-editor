@@ -1,7 +1,7 @@
 <template>
     <div id="job-editor">
-        <b-row>
-            <b-col>
+        <b-row class="mb-3">
+            <b-col cols="6">
                 <h2 class="mb-3">Job editor</h2>
             </b-col>
         </b-row>
@@ -43,7 +43,7 @@
                     </b-row>
                 </div>
 
-                <div class="content_block mt-5">
+                <div class="content_block mt-4">
                     <b-row>
                         <b-col>
                             <p class="text-center">
@@ -56,6 +56,14 @@
                         </b-col>
                     </b-row>
                 </div>
+
+                <b-card class="mt-2">
+                    <div class="float-right">
+                        <b-button class="mr-3" variant="outline-danger">Delete</b-button>
+                        <b-button class="mr-0" variant="success" @click="saveJob">Save</b-button>
+                    </div>
+                </b-card>
+
             </b-col>
 
             <b-col class="sidebar" cols="4">
@@ -69,12 +77,6 @@
                     <job-metadata v-model="job.metadata" />
 
                     <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p>
-                    <template slot="footer">
-                        <div class="float-right">
-                            <b-button class="mr-3" variant="outline-danger">Delete</b-button>
-                            <b-button class="mr-0" variant="success" @click="saveJob">Save</b-button>
-                        </div>
-                    </template>
                 </b-card>
             </b-col>
         </b-row>
