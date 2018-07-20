@@ -14,6 +14,8 @@ import Dashboard from "@/components/Dashboard.vue";
 import JobsList from "@/components/JobsList.vue";
 import JobEditor from "@/components/JobEditor.vue";
 
+import NotFoundComponent from "@/components/NotFoundComponent.vue";
+
 import TextContentBlock from "@/components/content_blocks/TextContentBlock";
 
 Vue.config.productionTip = false;
@@ -32,10 +34,13 @@ Vue.prototype.$axios = axios.create({
 const routes = [
     { path: "/", component: Dashboard },
     { path: "/jobs", component: JobsList },
-    { path: "/jobs/:id/edit", component: JobEditor, props: true }
+    { path: "/jobs/:id/edit", component: JobEditor, props: true },
+
+    { path: '*', component: NotFoundComponent }
 ];
 
 const router = new VueRouter({
+    mode: 'history',
     routes
 });
 

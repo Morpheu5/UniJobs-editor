@@ -29,10 +29,17 @@
             <template slot="header">
                 <h6 class="m-0">Organisation</h6>
             </template>
-            <b-input id="organisation-popover-input"></b-input>
-            <b-popover target="organisation-popover-input" placement="bottom" triggers="focus">
-                Type to search…
-            </b-popover>
+            
+            <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
+            <div class="mt-3">
+                <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
+                <div v-if="organizationSearchResults.length">
+                    {{ organizationSearchResults }}
+                </div>
+                <div v-else-if="organizationSearchQuery && !organizationSearchQueryDirty">
+                    No organizations found.
+                </div>
+            </div>
         </b-card>
 
         <b-card no-body class="mt-3">
@@ -52,10 +59,15 @@
 </template>
 
 <script>
+import _ from 'lodash';
 
 export default {
     props: {
         value: {
+            type: Object,
+            required: true
+        },
+        organization: {
             type: Object,
             required: true
         }
@@ -67,9 +79,16 @@ export default {
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
                 tax_status: null,
-                organisation: '',
                 url: this.spreadOverLocales({ content: '' })
-            }, this.value)
+            }, this.value),
+
+            thisOrganization: _.cloneDeep(this.organization),
+            
+            organizationSearchQuery: '',
+            organizationSearchQueryDirty: false,
+            organizationSearchQueryFetching: false,
+
+            organizationSearchResults: []
         }
     },
     watch: {
@@ -78,7 +97,45 @@ export default {
                 this.$emit('input', this.metadata)
             },
             deep: true
+        },
+        thisOrganization: {
+            handler: function() {
+                this.$parent.updateOrganization(this.thisOrganization);
+            }
+        },
+        organizationSearchQuery: function() {
+            this.organizationSearchQueryDirty = true;
+            if (!this.organizationSearchQueryTooShort) {
+                this.fetchOrganizations();
+            }
         }
+    },
+    methods: {
+        fetchOrganizations: _.debounce(function() {
+            this.organizationSearchQueryFetching = true;
+
+            let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w != '');
+
+            this.$axios
+                .get(`/organizations?q=${queryArray.join(' ')}`)
+                .then(response => {
+                    this.organizationSearchQueryDirty = false;
+                    this.organizationSearchQueryFetching = false;
+                    
+                    this.organizationSearchResults = response.data;
+                })
+                .catch(error => {
+                    this.organizationSearchQueryDirty = false;
+                    this.organizationSearchQueryFetching = false;
+
+                    this.organizationSearchResults = [];
+
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `There was a problem retrieving the list of organizations.<br/>${error}`
+                    });
+                })
+        }, 500)
     }
 }
 </script>

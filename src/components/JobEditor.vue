@@ -74,7 +74,7 @@
                     
                     <b-form-checkbox id="published" v-model="job.metadata.published">Published</b-form-checkbox>
 
-                    <job-metadata v-model="job.metadata" />
+                    <job-metadata v-model="job.metadata" :organization="job.organization" />
 
                     <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p>
                 </b-card>
@@ -131,6 +131,9 @@ export default {
         });
     },
     methods: {
+        updateOrganization(e) {
+            this.job.organization = _.cloneDeep(e);
+        },
         addContentBlock(blockType) {
             this.job.content_blocks = [
                 ...this.job.content_blocks,
