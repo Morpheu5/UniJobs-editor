@@ -19,9 +19,9 @@ module.exports = {
   rules: {
     'no-console': 'off',
     'no-debugger': 'off',
-    'no-unused-vars': 'warn',
+    'no-unused-vars': ['warn', { "argsIgnorePattern": "^_" }],
     'vue/html-indent': [ 'error', 4 ],
-    'vue/script-indent': [ 'error', 4 ],
+    // 'vue/script-indent': [ 'error', 4 ],
     'vue/attributes-order': 'error',
     'vue/order-in-components': 'error'
   },
