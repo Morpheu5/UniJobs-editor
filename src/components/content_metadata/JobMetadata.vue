@@ -30,7 +30,7 @@
                 <h6 class="m-0">Organisation</h6>
             </template>
 
-            {{ thisOrganization }}
+            <p>{{ thisOrganization.ancestors | formatPath }}</p>
             
             <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
@@ -41,8 +41,8 @@
                         :key="org.organization_id"
                         :active="thisOrganization.id === org.organization_id"
                         button
-                        @click="thisOrganization = org.path[org.path.length-1]">
-                        {{ org.path | formatPath }}
+                        @click="thisOrganization = org">
+                        {{ org.ancestors | formatPath }}
                     </b-list-group-item>
                 </b-list-group>
                 <div v-else-if="organizationSearchQuery && !organizationSearchQueryDirty">
@@ -73,7 +73,7 @@ import _ from 'lodash';
 export default {
     filters: {
         formatPath(path) {
-            return path.map((e, i, a) => (i < a.length ? e.short_name : e.name)).join(' › ');
+            return path ? path.map((e, i, a) => (i < a.length-1 ? e.short_name : e.name)).join(' › ') : '';
         }
     },
     props: {
@@ -113,7 +113,8 @@ export default {
             deep: true
         },
         thisOrganization: {
-            handler: function() {
+            handler: function(newOrg) {
+                _.merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
                 this.$parent.updateOrganization(this.thisOrganization);
             }
         },
@@ -155,7 +156,7 @@ export default {
         },
         flattenForest(forest) {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
-                         .map(t => ({ organization_id: t[t.length-1].id, path: t }));
+                         .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
         }
     }
 }

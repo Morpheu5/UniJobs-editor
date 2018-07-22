@@ -76,7 +76,7 @@
 
                     <job-metadata v-model="job.metadata" :organization="job.organization" />
 
-                    <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p>
+                    <!-- <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p> -->
                 </b-card>
             </b-col>
         </b-row>
@@ -167,7 +167,12 @@ export default {
             }
 
             // Prepare the request for the content
-            const jobParams = { data: _.omit(this.job, ["id", "content_blocks"]) };
+            const jobParams = {
+                data: _.merge(
+                    _.omit(this.job, ["id", "content_blocks", "organization"]),
+                    { organization_id: this.job.organization.id }
+                )
+            };
             const jobMethod = this.job.id ? 'patch' : 'post';
             requests.push(
                 this.$axios[jobMethod](
