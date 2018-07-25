@@ -10,7 +10,8 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import App from "./App.vue";
 import store from "./store";
 
-import Dashboard from "@/components/Dashboard.vue";
+import Login from "@/components/Login.vue";
+import MainContainer from "@/components/MainContainer.vue";
 import JobsList from "@/components/JobsList.vue";
 import JobEditor from "@/components/JobEditor.vue";
 
@@ -32,9 +33,14 @@ Vue.prototype.$axios = axios.create({
 })
 
 const routes = [
-    { path: "/", component: Dashboard },
-    { path: "/jobs", component: JobsList },
-    { path: "/jobs/:id/edit", component: JobEditor, props: true },
+    { path: "/login", component: Login },
+    {
+        path: "/", component: MainContainer,
+        children: [
+            { path: "jobs", component: JobsList },
+            { path: "jobs/:id/edit", component: JobEditor, props: true },
+        ]
+    },
 
     { path: '*', component: NotFoundComponent }
 ];
