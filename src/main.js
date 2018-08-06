@@ -29,7 +29,8 @@ Vue.component("TextContentBlock", TextContentBlock);
 
 // Configure axios so we can use this.$axios
 Vue.prototype.$axios = axios.create({
-    baseURL: process.env.VUE_APP_API_URL || 'http://localhost:3000'
+    baseURL: process.env.VUE_APP_API_URL || 'http://localhost:3000',
+    withCredentials: true
 })
 
 const routes = [
