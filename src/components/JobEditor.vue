@@ -59,10 +59,17 @@
 
                 <b-card class="mt-2">
                     <div class="float-right">
-                        <b-button class="mr-3" variant="outline-danger">Delete</b-button>
+                        <b-button v-b-modal.deleteJobModal class="mr-3" variant="outline-danger">Delete</b-button>
                         <b-button class="mr-0" variant="success" @click="saveJob">Save</b-button>
                     </div>
                 </b-card>
+
+                <b-modal id="deleteJobModal" title="Delete this job?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteJob">
+                    <p><strong>This action is permanent</strong>.</p>
+                    <p>If you confirm, you <strong>will not</strong> be able to recover the job offer.</p>
+                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this job offer instead.</p>
+                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this job offer?</strong></p>
+                </b-modal>
 
             </b-col>
 
@@ -75,8 +82,6 @@
                     <b-form-checkbox id="published" v-model="job.metadata.published">Published</b-form-checkbox>
 
                     <job-metadata v-model="job.metadata" :organization="job.organization" />
-
-                    <!-- <p class="small mt-4 mb-0"><b>uuid</b><br/>{{ job.uuid }}</p> -->
                 </b-card>
             </b-col>
         </b-row>
@@ -194,6 +199,9 @@ export default {
                         message: `Something went wrong while saving this job.<br/>${error}`
                     });
             });
+        },
+        deleteJob() {
+            // TODO: Implement this.
         },
         contentTypeToComponentName(n) {
             return `${_.capitalize(_.camelCase(n))}ContentBlock`;
