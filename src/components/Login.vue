@@ -62,7 +62,12 @@ export default {
                 '/login',
                 { email: this.email, password: this.password }
             ).then(response => {
-                console.log(response);
+                if (response.data.token) {
+                    localStorage.setItem('unijobs_magic_token', response.data.token);
+                    this.$router.push({ path: this.$route.query.redirect || '/' })
+                } else {
+                    // TODO Show error maybe?
+                }
             }).catch(error => {
                 console.debug(error);
             })

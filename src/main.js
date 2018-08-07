@@ -28,10 +28,19 @@ Vue.use(VueRouter);
 Vue.component("TextContentBlock", TextContentBlock);
 
 // Configure axios so we can use this.$axios
-Vue.prototype.$axios = axios.create({
+let axiosObject = axios.create({
     baseURL: process.env.VUE_APP_API_URL || 'http://localhost:3000',
     withCredentials: true
-})
+});
+axiosObject.interceptors.request.use(function(config) {
+    config.headers['Content-Type'] = 'application/json';
+    const t = localStorage.getItem('unijobs_magic_token');
+    if (null !== t) {
+        config.headers.Authorization = `Bearer ${t}`;
+    }
+    return config;
+});
+Vue.prototype.$axios = axiosObject;
 
 const routes = [
     { path: "/login", component: Login },
@@ -49,6 +58,22 @@ const routes = [
 const router = new VueRouter({
     mode: 'history',
     routes
+});
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(route => !['/login'].includes(route.path))) {
+        let t = localStorage.getItem('unijobs_magic_token');
+        if (null === t) {
+            next({
+                path: "/login",
+                query: {
+                    redirect: to.fullPath
+                }
+            });
+        } else {
+            next();
+        }
+    }
+    next();
 });
 
 Vue.mixin({
