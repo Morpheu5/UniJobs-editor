@@ -106,29 +106,7 @@ export default {
         };
     },
     created() {
-        this.$axios
-            .get(`/contents/${this.id}`)
-            .then(response => {
-                // Add the "delete" property on the fly to the response data before assigning it
-                // to the component, otherwise stuff will not bind to it.
-                let q = _.clone(response.data.content_blocks);
-                let i = 0;
-                while (i < q.length) {
-                    q[i].delete = false;
-                    if (q[i].content_blocks) {
-                        q.push(_.clone(q[i].content_blocks));
-                    }
-                    i += 1
-                }
-                this.job = response.data;
-            })
-            .catch(error => {
-                this.job = null;
-                this.$root.$emit("global-notification", {
-                    type: "danger",
-                    message: `Could not retrieve content.<br/>${error}`
-                });
-            });
+        this.fetchJob();
     },
     methods: {
         updateOrganization(e) {
@@ -145,25 +123,46 @@ export default {
                 }
             ];
         },
+        fetchJob() {
+            this.$axios
+                .get(`/contents/${this.id}`)
+                .then(response => {
+                    // Add the "delete" property on the fly to the response data before assigning it
+                    // to the component, otherwise stuff will not bind to it.
+                    let q = _.clone(response.data.content_blocks);
+                    let i = 0;
+                    while (i < q.length) {
+                        q[i].delete = false;
+                        if (q[i].content_blocks) {
+                            q.push(_.clone(q[i].content_blocks));
+                        }
+                        i += 1
+                    }
+                    this.job = response.data;
+                })
+                .catch(error => {
+                    this.job = null;
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `Could not retrieve content.<br/>${error}`
+                    });
+                });
+        },
         saveJob() {
             const requests = [];
 
             // Prepare the requests for the content_blocks
             for (const contentBlock of this.job.content_blocks) {
-                const contentBlockParams = { data: _.omit(contentBlock, ["id"]) };
-                let contentBlockMethod;
-                if (contentBlock.delete) { // FIXME This doesn't work when block is created AND deleted at the same time.
-                    contentBlockMethod = 'delete';
-                    contentBlockParams = null;
-                } else {
-                    contentBlockMethod = contentBlock.id ? 'patch' : 'post';
+                const contentBlockParams = contentBlock.delete ? null : { data: _.omit(contentBlock, ["id"]) };
+                const contentBlockMethod = contentBlock.delete ? 'delete' : (contentBlock.id ? 'patch' : 'post');
+                if (contentBlockMethod === 'delete' && contentBlock.id) {
+                    requests.push(
+                        this.$axios[contentBlockMethod](
+                            `/contents/${this.id}/content_blocks/${contentBlock.id || ''}`,
+                            contentBlockParams
+                        )
+                    );
                 }
-                requests.push(
-                    this.$axios[contentBlockMethod](
-                        `/contents/${this.id}/content_blocks/${contentBlock.id || ''}`,
-                        contentBlockParams
-                    )
-                );
             }
 
             // Prepare the request for the content
@@ -187,6 +186,7 @@ export default {
                         type: "success",
                         message: "Job saved correctly."
                     });
+                    this.fetchJob();
                 })
                 .catch(error => {
                     this.$root.$emit("global-notification", {
