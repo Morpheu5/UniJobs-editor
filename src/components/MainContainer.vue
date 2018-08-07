@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import GlobalNotifications from './GlobalNotifications';
+
 export default {
     methods: {}
 };

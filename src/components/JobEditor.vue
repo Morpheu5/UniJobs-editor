@@ -128,7 +128,7 @@ export default {
                     type: "danger",
                     message: `Could not retrieve content.<br/>${error}`
                 });
-        });
+            });
     },
     methods: {
         updateOrganization(e) {
