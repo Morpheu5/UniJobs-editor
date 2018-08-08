@@ -1,15 +1,11 @@
 <template>
     <div id="job-editor">
-        <b-row class="mb-3">
-            <b-col cols="6">
-                <h2 class="mb-3">Job editor</h2>
-            </b-col>
-        </b-row>
         <b-row v-if="job">
             <b-col>
                 <b-row class="mt-3">
                     <b-col>
                         <h3>Title</h3>
+                        <p>A brief description of the job advert.</p>
                         <b-card no-body>
                             <b-tabs card>
                                 <b-tab v-for="l in availableLocales()" :key="`title-${l.code}`">
@@ -60,7 +56,7 @@
                 <b-card class="mt-2">
                     <div class="float-right">
                         <b-button v-b-modal.deleteJobModal class="mr-3" variant="outline-danger">Delete</b-button>
-                        <b-button class="mr-0" variant="success" @click="saveJob">Save</b-button>
+                        <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveJob">Save</b-button>
                     </div>
                 </b-card>
 
@@ -107,8 +103,22 @@ export default {
     data() {
         return {
             job: null,
-            showBlocks: false,
+            referenceDocument: null,
+            documentDirty: false,
         };
+    },
+    watch: {
+        job: {
+            handler: _.debounce(function() {
+                if (_.isEqual(this.job, this.referenceDocument)) {
+                    this.documentDirty = false;
+                } else {
+                    this.documentDirty = true;
+                }
+                this.$root.$emit('unsaved-changes', this.documentDirty);
+            }, 500),
+            deep: true
+        }
     },
     created() {
         this.fetchJob();
@@ -143,7 +153,8 @@ export default {
                         }
                         i += 1
                     }
-                    this.job = response.data;
+                    this.job = _.cloneDeep(response.data);
+                    this.referenceDocument = _.cloneDeep(response.data);
                 })
                 .catch(error => {
                     this.job = null;
@@ -160,7 +171,7 @@ export default {
             for (const contentBlock of this.job.content_blocks) {
                 const contentBlockParams = contentBlock.delete ? null : { data: _.omit(contentBlock, ["id"]) };
                 const contentBlockMethod = contentBlock.delete ? 'delete' : (contentBlock.id ? 'patch' : 'post');
-                if (contentBlockMethod === 'delete' && contentBlock.id) {
+                if (contentBlockMethod !== 'delete' || contentBlock.id) {
                     requests.push(
                         this.$axios[contentBlockMethod](
                             `/contents/${this.id}/content_blocks/${contentBlock.id || ''}`,
@@ -187,11 +198,12 @@ export default {
 
             Promise.all(requests)
                 .then(() => {
+                    this.fetchJob();
+                    // this.referenceDocument = _.cloneDeep(this.job);
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: "Job saved correctly."
                     });
-                    this.fetchJob();
                 })
                 .catch(error => {
                     this.$root.$emit("global-notification", {

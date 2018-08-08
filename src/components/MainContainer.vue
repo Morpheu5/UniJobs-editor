@@ -1,9 +1,10 @@
 <template>
     <div id="main_container">
-        <b-container fluid class="bg-primary text-light">
+        <b-container fluid class="bg-primary text-light sticky-top">
             <b-row class="py-2">
                 <b-col>
-                    <h1>Content Editor</h1>
+                    <h1 class="d-inline">Content Editor</h1>
+                    <b-badge v-show="unsavedChanges" class="ml-3" variant="light text-danger">There are unsaved changes in this page.</b-badge>
                 </b-col>
                 <b-col cols="1">
                     <b-button size="lg" variant="danger" class="mt-1" @click="logout">Logout</b-button>
@@ -37,8 +38,15 @@ export default {
     },
     data() {
         return {
-            current_user: {}
+            current_user: {},
+            unsavedChanges: false
         }
+    },
+    mounted() {
+        this.$root.$on('unsaved-changes', v => { this.unsavedChanges = v });
+    },
+    beforeDestroy() {
+        this.$root.$off('unsaved-changes');
     },
     created() {
         this.$axios
