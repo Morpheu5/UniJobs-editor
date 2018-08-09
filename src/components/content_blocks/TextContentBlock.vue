@@ -7,9 +7,6 @@
                         {{ l.name }} <span v-show="!block_data.body[l.code] || block_data.body[l.code] == ''" class="missing">(missing)</span>
                     </template>
                     <b-form-textarea v-model="block_data.body[l.code].content" :disabled="value.delete" rows="6" />
-                    <div class="small mt-3">
-                        <code>{{ { block_type: block_data.block_type, uuid: block_data.uuid, order: value.order, delete: value.delete } }}</code>
-                    </div>
                 </b-tab>
             </b-tabs>
         </b-card>

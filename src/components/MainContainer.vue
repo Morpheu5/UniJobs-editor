@@ -3,22 +3,24 @@
         <b-container fluid class="bg-primary text-light sticky-top">
             <b-row class="py-2">
                 <b-col>
-                    <h1 class="d-inline">Content Editor</h1>
-                    <b-badge v-show="unsavedChanges" class="ml-3" variant="light text-danger">There are unsaved changes in this page.</b-badge>
+                    <h1 class="d-inline">UniJobs.it Content Editor</h1>
+                    <b-badge v-show="unsavedChanges" class="ml-4" variant="light text-danger">There are unsaved changes in this page.</b-badge>
                 </b-col>
-                <b-col cols="1">
-                    <b-button size="lg" variant="danger" class="mt-1" @click="logout">Logout</b-button>
+                <b-col cols="2">
+                    <div class="float-right">
+                        <!-- <b-button size="lg" variant="light" class="my-1">Profile</b-button> -->
+                        <b-button size="lg" variant="danger" class="my-1 ml-2" @click="logout">Logout</b-button>
+                    </div>
                 </b-col>
             </b-row>
         </b-container>
         <b-container fluid class="bg-white text-dark">
             <b-row class="pb-5">
                 <b-col cols="2" class="text-dark">
-                    <p>Hi, {{ current_user.given_name }}</p>
-                    <ul>
-                        <li><router-link to="/" class="text-dark">Dashboard</router-link></li>
-                        <li><router-link to="/jobs" class="text-dark">Jobs</router-link></li>
-                    </ul>
+                    <b-list-group class="my-3">
+                        <b-list-group-item to="/dashboard"><fa :icon="['fas', 'tachometer-alt']" class="mr-3" />Dashboard</b-list-group-item>
+                        <b-list-group-item to="/jobs"><fa :icon="['fas', 'folder']" class="mr-3" />Job offers</b-list-group-item>
+                    </b-list-group>
                 </b-col>
                 <b-col>
                     <global-notifications/>

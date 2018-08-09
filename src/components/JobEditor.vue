@@ -27,8 +27,8 @@
                             </div>
                             <div class="float-right">
                                 <span v-show="block.delete" class="text-danger">This block will be deleted when you save the document. </span>
-                                <b-button v-show="block.delete" variant="success" size="sm" @click="block.delete = false">&circlearrowleft;</b-button>
-                                <b-button v-show="!block.delete" variant="danger" size="sm" @click="block.delete = true">&times;</b-button>
+                                <b-button v-show="block.delete" variant="success" size="sm" @click="block.delete = false"><fa :icon="['fas', 'undo']" fixed-width /></b-button>
+                                <b-button v-show="!block.delete" variant="danger" size="sm" @click="block.delete = true"><fa :icon="['far', 'trash-alt']" fixed-width /></b-button>
                             </div>
                         </b-col>
                     </b-row>
