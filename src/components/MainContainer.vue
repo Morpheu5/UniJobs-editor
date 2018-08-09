@@ -62,8 +62,15 @@ export default {
     },
     methods: {
         logout() {
-            localStorage.removeItem('unijobs_magic_token');
-            this.$router.push({ path: '/login' });
+            this.$axios
+                .post('/logout')
+                .then(_response => {
+                    localStorage.removeItem('unijobs_magic_token');
+                    this.$router.push({ path: '/login' });
+                })
+                .catch(error => {
+                    console.log('LOGOUT Error', error);
+                })
         }
     }
 };
