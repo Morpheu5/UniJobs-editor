@@ -70,7 +70,7 @@ export default {
                 })
                 .catch(error => {
                     console.log('LOGOUT Error', error);
-                })
+                });
         }
     }
 };
