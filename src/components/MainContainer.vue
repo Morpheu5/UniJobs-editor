@@ -19,7 +19,7 @@
                 <b-col cols="2" class="text-dark">
                     <b-list-group class="my-3">
                         <b-list-group-item to="/dashboard"><fa :icon="['fas', 'tachometer-alt']" class="mr-3" />Dashboard</b-list-group-item>
-                        <b-list-group-item to="/jobs"><fa :icon="['fas', 'folder']" class="mr-3" />Job offers</b-list-group-item>
+                        <b-list-group-item to="/contents"><fa :icon="['fas', 'folder']" class="mr-3" />Your contents</b-list-group-item>
                     </b-list-group>
                 </b-col>
                 <b-col>
@@ -58,6 +58,8 @@ export default {
             })
             .catch(error => {
                 console.log(error);
+                localStorage.removeItem('unijobs_magic_token');
+                this.$router.push({ path: '/login' });
             });
     },
     methods: {

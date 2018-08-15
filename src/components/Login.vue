@@ -12,29 +12,32 @@
                 <b-col cols="4" offset="4">
                     <b-card>
                         <h2 slot="header" class="text-center">Login</h2>
-                        <b-input id="login-email"
-                                 v-model="email"
-                                 name="username"
-                                 type="email"
-                                 class="mt-3"
-                                 placeholder="E-mail address"
-                                 required
-                                 autocomplete="username"
-                        />
-                        <b-input id="login-password"
-                                 v-model="password"
-                                 :type="showPassword ? 'text' : 'password'"
-                                 name="password"
-                                 class="mt-3"
-                                 placeholder="Password"
-                                 required
-                                 autocomplete="current-password"
-                                 @keyup.native.enter="doTheLogin"
-                        />
-                        <b-checkbox id="login-reveal-password"
-                                    v-model="showPassword"
-                                    class="mt-4"
-                        >Show password</b-checkbox>
+                        <b-input-group>
+                            <b-input id="login-email"
+                                     v-model="email"
+                                     name="username"
+                                     type="email"
+                                     class="my-3"
+                                     placeholder="E-mail address"
+                                     required
+                                     autocomplete="username"
+                            />
+                        </b-input-group>
+                        <b-input-group>
+                            <b-input id="login-password"
+                                     v-model="password"
+                                     :type="showPassword ? 'text' : 'password'"
+                                     name="password"
+                                     class=""
+                                     placeholder="Password"
+                                     required
+                                     autocomplete="current-password"
+                                     @keyup.native.enter="doTheLogin"
+                            />
+                            <b-input-group-append>
+                                <b-button variant="outline-secondary" @click="showPassword = !showPassword"><fa :icon="['far', showPassword ? 'eye-slash' : 'eye']" /></b-button>
+                            </b-input-group-append>
+                        </b-input-group>
                         <b-button id="login-button"
                                   class="float-right mt-3"
                                   variant="primary"

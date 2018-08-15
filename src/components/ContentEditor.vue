@@ -1,25 +1,24 @@
 <template>
-    <div id="job-editor">
-        <b-row v-if="job">
+    <div id="content-editor">
+        <b-row v-if="content">
             <b-col>
                 <b-row class="mt-3">
                     <b-col>
                         <h3>Title</h3>
-                        <p>A brief description of the job advert.</p>
                         <b-card no-body>
                             <b-tabs card>
                                 <b-tab v-for="l in availableLocales()" :key="`title-${l.code}`">
                                     <template slot="title">
-                                        {{ l.name }} <span v-show="!job.title[l.code] || job.title[l.code] == ''" class="missing">(missing)</span>
+                                        {{ l.name }} <span v-show="!content.title[l.code] || content.title[l.code] == ''" class="missing">(missing)</span>
                                     </template>
-                                    <b-form-input v-model="job.title[l.code]" type="text" placeholder="Enter a title" />
+                                    <b-form-input v-model="content.title[l.code]" type="text" placeholder="Enter a title" />
                                 </b-tab>
                             </b-tabs>
                         </b-card>
                     </b-col>
                 </b-row>
 
-                <div v-for="(block, i) in job.content_blocks" :key="block.uuid" class="content_block mt-5">
+                <div v-for="(block, i) in content.content_blocks" :key="block.uuid" class="content_block mt-5">
                     <b-row>
                         <b-col>
                             <div class="float-left">
@@ -34,7 +33,7 @@
                     </b-row>
                     <b-row class="mt-2">
 
-                        <component v-model="job.content_blocks[i]" :contentId="id" :is="contentTypeToComponentName(block.block_type)" />
+                        <component v-model="content.content_blocks[i]" :contentId="id" :is="contentTypeToComponentBlockName(block.block_type)" />
 
                     </b-row>
                 </div>
@@ -55,16 +54,16 @@
 
                 <b-card class="mt-2">
                     <div class="float-right">
-                        <b-button v-b-modal.deleteJobModal class="mr-3" variant="outline-danger">Delete</b-button>
-                        <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveJob">Save</b-button>
+                        <b-button v-b-modal.deleteContentModal class="mr-3" variant="outline-danger">Delete</b-button>
+                        <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveContent">Save</b-button>
                     </div>
                 </b-card>
 
-                <b-modal id="deleteJobModal" title="Delete this job?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteJob">
+                <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent">
                     <p><strong>This action is permanent</strong>.</p>
-                    <p>If you confirm, you <strong>will not</strong> be able to recover the job offer.</p>
-                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this job offer instead.</p>
-                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this job offer?</strong></p>
+                    <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
+                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
+                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
                 </b-modal>
 
             </b-col>
@@ -75,9 +74,9 @@
                         <h6 class="m-0">Meta</h6>
                     </template>
                     
-                    <b-form-checkbox id="published" v-model="job.metadata.published">Published</b-form-checkbox>
+                    <b-form-checkbox id="published" v-model="content.metadata.published">Published</b-form-checkbox>
 
-                    <job-metadata v-model="job.metadata" :organization="job.organization" />
+                    <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type)" />
                 </b-card>
             </b-col>
         </b-row>
@@ -89,10 +88,12 @@ import _ from "lodash";
 import uuidv4 from "uuid/v4";
 
 import JobMetadata from "./content_metadata/JobMetadata";
+import PageMetadata from "./content_metadata/PageMetadata";
 
 export default {
     components: {
-        JobMetadata
+        JobMetadata,
+        PageMetadata
     },
     props: {
         id: {
@@ -102,15 +103,15 @@ export default {
     },
     data() {
         return {
-            job: null,
+            content: null,
             referenceDocument: null,
             documentDirty: false,
         };
     },
     watch: {
-        job: {
+        content: {
             handler: _.debounce(function() {
-                if (_.isEqual(this.job, this.referenceDocument)) {
+                if (_.isEqual(this.content, this.referenceDocument)) {
                     this.documentDirty = false;
                 } else {
                     this.documentDirty = true;
@@ -121,24 +122,24 @@ export default {
         }
     },
     created() {
-        this.fetchJob();
+        this.fetchContent();
     },
     methods: {
         updateOrganization(e) {
-            this.job.organization = _.cloneDeep(e);
+            this.content.organization = _.cloneDeep(e);
         },
         addContentBlock(blockType) {
-            this.job.content_blocks = [
-                ...this.job.content_blocks,
+            this.content.content_blocks = [
+                ...this.content.content_blocks,
                 {
                     block_type: blockType,
                     uuid: uuidv4(),
                     delete: false,
-                    order: this.job.content_blocks.length > 0 ? _.last(this.job.content_blocks).order + 1 : 1
+                    order: this.content.content_blocks.length > 0 ? _.last(this.content.content_blocks).order + 1 : 1
                 }
             ];
         },
-        fetchJob() {
+        fetchContent() {
             this.$axios
                 .get(`/contents/${this.id}`)
                 .then(response => {
@@ -153,22 +154,22 @@ export default {
                         }
                         i += 1
                     }
-                    this.job = _.cloneDeep(response.data);
+                    this.content = _.cloneDeep(response.data);
                     this.referenceDocument = _.cloneDeep(response.data);
                 })
                 .catch(error => {
-                    this.job = null;
+                    this.content = null;
                     this.$root.$emit("global-notification", {
                         type: "danger",
                         message: `Could not retrieve content.<br/>${error}`
                     });
                 });
         },
-        saveJob() {
+        saveContent() {
             const requests = [];
 
             // Prepare the requests for the content_blocks
-            for (const contentBlock of this.job.content_blocks) {
+            for (const contentBlock of this.content.content_blocks) {
                 const contentBlockParams = contentBlock.delete ? null : { data: _.omit(contentBlock, ["id"]) };
                 const contentBlockMethod = contentBlock.delete ? 'delete' : (contentBlock.id ? 'patch' : 'post');
                 if (contentBlockMethod !== 'delete' || contentBlock.id) {
@@ -182,41 +183,43 @@ export default {
             }
 
             // Prepare the request for the content
-            const jobParams = {
+            const contentParams = {
                 data: _.merge(
-                    _.omit(this.job, ["id", "content_blocks", "organization"]),
-                    { organization_id: this.job.organization.id }
+                    _.omit(this.content, ["id", "content_blocks", "organization"]),
+                    { organization_id: this.content.organization.id }
                 )
             };
-            const jobMethod = this.job.id ? 'patch' : 'post';
+            const contentMethod = this.content.id ? 'patch' : 'post';
             requests.push(
-                this.$axios[jobMethod](
+                this.$axios[contentMethod](
                     `/contents/${this.id}`,
-                    jobParams
+                    contentParams
                 )
             );
 
             Promise.all(requests)
                 .then(() => {
-                    this.fetchJob();
-                    // this.referenceDocument = _.cloneDeep(this.job);
+                    this.fetchContent();
                     this.$root.$emit("global-notification", {
                         type: "success",
-                        message: "Job saved correctly."
+                        message: "Content saved correctly."
                     });
                 })
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `Something went wrong while saving this job.<br/>${error}`
+                        message: `Something went wrong while saving this content.<br/>${error}`
                     });
             });
         },
-        deleteJob() {
+        deleteContent() {
             // TODO: Implement this.
         },
-        contentTypeToComponentName(n) {
+        contentTypeToComponentBlockName(n) {
             return `${_.capitalize(_.camelCase(n))}ContentBlock`;
+        },
+        contentTypeToComponentMetaName(n) {
+            return `${_.capitalize(_.camelCase(n))}Metadata`;
         }
     }
 };

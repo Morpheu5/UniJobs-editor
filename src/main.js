@@ -13,8 +13,8 @@ import store from "./store";
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import MainContainer from "@/components/MainContainer.vue";
-import JobsList from "@/components/JobsList.vue";
-import JobEditor from "@/components/JobEditor.vue";
+import ContentsList from "@/components/ContentsList.vue";
+import ContentEditor from "@/components/ContentEditor.vue";
 
 import NotFoundComponent from "@/components/NotFoundComponent.vue";
 
@@ -29,11 +29,17 @@ import { faSquare } from '@fortawesome/free-regular-svg-icons/faSquare';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons/faCheckSquare';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons/faTachometerAlt';
 import { faFolder } from '@fortawesome/free-solid-svg-icons/faFolder';
+import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
+import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
+import { faEye } from '@fortawesome/free-regular-svg-icons/faEye';
+import { faEyeSlash } from '@fortawesome/free-regular-svg-icons/faEyeSlash';
 
 library.add(
     faTrashAlt, faEdit, faUndo,
     faSquare, faCheckSquare,
     faTachometerAlt, faFolder,
+    faSearch, faFilter,
+    faEye, faEyeSlash
 );
 
 Vue.config.productionTip = false;
@@ -61,14 +67,19 @@ axiosObject.interceptors.request.use(function(config) {
 });
 Vue.prototype.$axios = axiosObject;
 
+Vue.filter('titleCase', function(value) {
+    if (!value) return '';
+    return _.startCase(value);
+});
+
 const routes = [
     { path: "/login", component: Login },
     {
         path: "/", component: MainContainer, redirect: '/dashboard',
         children: [
             { path: "dashboard", component: Dashboard },
-            { path: "jobs", component: JobsList },
-            { path: "jobs/:id/edit", component: JobEditor, props: true },
+            { path: "contents", component: ContentsList },
+            { path: "contents/:id/edit", component: ContentEditor, props: true },
         ]
     },
 
