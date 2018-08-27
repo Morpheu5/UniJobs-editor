@@ -51,6 +51,19 @@
             </div>
         </b-card>
 
+        <b-card class="mt-3">
+            <template slot="header">
+                <h6 class="m-0">Application Deadline</h6>
+            </template>
+
+            <b-input-group>
+                <b-input-group-text slot="append"><fa :icon="['far', 'calendar-alt']" /></b-input-group-text>
+                <flat-pickr v-model="metadata.deadline"
+                            :config="deadlinePickerOptions"
+                />
+            </b-input-group>
+        </b-card>
+
         <b-card no-body class="mt-3">
             <template slot="header">
                 <h6 class="m-0">Application URL</h6>
@@ -93,6 +106,7 @@ export default {
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
                 tax_status: null,
+                deadline: new Date(),
                 url: this.spreadOverLocales({ content: '' })
             }, this.value),
 
@@ -102,7 +116,17 @@ export default {
             organizationSearchQueryDirty: false,
             organizationSearchQueryFetching: false,
 
-            organizationSearchResults: []
+            organizationSearchResults: [],
+
+            deadlinePickerOptions: {
+                dateFormat: 'Z',
+                altFormat: 'd/m/Y @ H:i',
+                altInput: true,
+                enableTime: true,
+                time_24hr: true,
+                allowInput: true,
+                wrap: true
+            }
         }
     },
     watch: {

@@ -7,6 +7,10 @@ import BootstrapVue from "bootstrap-vue";
 import "bootstrap/scss/bootstrap.scss";
 import "bootstrap-vue/dist/bootstrap-vue.min.css";
 
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import 'flatpickr/dist/themes/light.css';
+
 import App from "./App.vue";
 import store from "./store";
 
@@ -33,19 +37,28 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faFilter } from '@fortawesome/free-solid-svg-icons/faFilter';
 import { faEye } from '@fortawesome/free-regular-svg-icons/faEye';
 import { faEyeSlash } from '@fortawesome/free-regular-svg-icons/faEyeSlash';
+import { faClock } from '@fortawesome/free-regular-svg-icons/faClock';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons/faArrowUp';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons/faArrowDown';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons/faCalendarAlt';
+import { faTimesCircle } from '@fortawesome/free-regular-svg-icons/faTimesCircle';
 
 library.add(
     faTrashAlt, faEdit, faUndo,
     faSquare, faCheckSquare,
     faTachometerAlt, faFolder,
     faSearch, faFilter,
-    faEye, faEyeSlash
+    faEye, faEyeSlash,
+    faClock, faArrowUp, faArrowDown, faChevronLeft, faChevronRight, faCalendarAlt, faTimesCircle
 );
 
 Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
+Vue.use(flatPickr);
 
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);
