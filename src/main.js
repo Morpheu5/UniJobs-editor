@@ -92,6 +92,7 @@ const routes = [
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "contents", component: ContentsList },
+            { path: "contents/:content_type/new", component: ContentEditor, props: { id: "new" } },
             { path: "contents/:id/edit", component: ContentEditor, props: true },
         ]
     },
@@ -123,7 +124,7 @@ router.beforeEach((to, from, next) => {
 Vue.mixin({
     methods: {
         availableLocales() {
-            return [ { code: "it", name: "Italiano" }, { code: "en", name: "English" } ]
+            return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-UK", name: "English" } ]
         },
         spreadOverLocales(o) {
             return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _.cloneDeep(o)}), {})

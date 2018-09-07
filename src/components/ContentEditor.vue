@@ -99,6 +99,10 @@ export default {
         id: {
             type: String,
             required: true
+        },
+        content_type: {
+            type: String,
+            required: false
         }
     },
     data() {
@@ -122,7 +126,21 @@ export default {
         }
     },
     created() {
-        this.fetchContent();
+        console.log(this.$route)
+        if (this.id === 'new') {
+            this.content = {
+                id: -1,
+                uuid: 0,
+                content_type: this.$route.params.content_type,
+                title: this.spreadOverLocales(''),
+                metadata: {},
+                organization: {},
+                content_blocks: []
+            };
+            this.referenceDocument = _.cloneDeep(this.content);
+        } else {
+            this.fetchContent();
+        }
     },
     methods: {
         updateOrganization(e) {
