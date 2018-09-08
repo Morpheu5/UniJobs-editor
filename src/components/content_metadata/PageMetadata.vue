@@ -2,10 +2,22 @@
     <div>
         <b-card class="mt-3">
             <template slot="header">
+                <h6 class="m-0">URL Slug</h6>
+            </template>
+
+            <b-form-group>
+                <b-input id="page_metadata_url_slug"
+                         v-model="metadata.slug"
+                />
+            </b-form-group>
+        </b-card>
+
+        <b-card class="mt-3">
+            <template slot="header">
                 <h6 class="m-0">Organisation</h6>
             </template>
 
-            <p>{{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="this.thisOrganization.ancestors">Selected: {{ thisOrganization.ancestors | formatPath }}</p>
             
             <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
@@ -50,7 +62,8 @@ export default {
     data() {
         return {
             metadata: _.merge({
-                published: false
+                published: false,
+                slug: ''
             }, this.value),
 
             thisOrganization: _.cloneDeep(this.organization),
