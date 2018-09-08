@@ -126,10 +126,9 @@ export default {
         }
     },
     created() {
-        console.log(this.$route)
         if (this.id === 'new') {
             this.content = {
-                id: -1,
+                id: null,
                 uuid: 0,
                 content_type: this.$route.params.content_type,
                 title: this.spreadOverLocales(''),
@@ -184,51 +183,49 @@ export default {
                 });
         },
         saveContent() {
-            const requests = [];
-
-            // Prepare the requests for the content_blocks
-            for (const contentBlock of this.content.content_blocks) {
-                const contentBlockParams = contentBlock.delete ? null : { data: _.omit(contentBlock, ["id"]) };
-                const contentBlockMethod = contentBlock.delete ? 'delete' : (contentBlock.id ? 'patch' : 'post');
-                if (contentBlockMethod !== 'delete' || contentBlock.id) {
-                    requests.push(
-                        this.$axios[contentBlockMethod](
-                            `/contents/${this.id}/content_blocks/${contentBlock.id || ''}`,
-                            contentBlockParams
-                        )
-                    );
-                }
-            }
-
             // Prepare the request for the content
             const contentParams = {
                 data: _.merge(
                     _.omit(this.content, ["id", "content_blocks", "organization"]),
-                    { organization_id: this.content.organization.id }
+                    {
+                        organization_id: this.content.organization.id,
+                        content_blocks_attributes: this.content.content_blocks,
+                    }
                 )
             };
-            const contentMethod = this.content.id ? 'patch' : 'post';
-            requests.push(
-                this.$axios[contentMethod](
-                    `/contents/${this.id}`,
-                    contentParams
-                )
-            );
-
-            Promise.all(requests)
-                .then(() => {
+            if (this.id === 'new') {
+                // Create (POST)
+                this.$axios.post('/contents', contentParams)
+                .then(response => {
+                    // Content created!
+                    this.$router.push({ path: `/contents/${response.data.id}/edit`})
+                }).catch(error => {
+                    // Error creating the content
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `Something went wrong while saving this content.<br/>${error}`
+                    })
+                });
+            } else if (this.content.id) {
+                // Edit (PATCH)
+                this.$axios.patch(`/contents/${this.content.id}`, contentParams)
+                .then(response => {
+                    // Content edited!
                     this.fetchContent();
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: "Content saved correctly."
                     });
-                })
-                .catch(error => {
+                }).catch(error => {
+                    // Error editing the content
                     this.$root.$emit("global-notification", {
                         type: "danger",
                         message: `Something went wrong while saving this content.<br/>${error}`
-                    });
-            });
+                    })
+                })
+            } else {
+                // This is weird...
+            }
         },
         deleteContent() {
             // TODO: Implement this.
