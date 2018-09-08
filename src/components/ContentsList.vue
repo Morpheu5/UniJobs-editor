@@ -100,7 +100,8 @@ export default {
         filteredContents() {
             let filteredContents = this.contents;
             if (this.filters.title !== '') {
-                const titleFilters = new RegExp(this.filters.title.split(new RegExp(',| ')).join('|'), 'i');
+                const titleFilters = new RegExp(this.filters.title.split(new RegExp(',| ')).filter(e => e !== '').join('|'), 'i');
+                console.log(titleFilters)
                 filteredContents = filteredContents.filter(content => Object.values(content.title).some(v => v.match(titleFilters)));
             }
             if (this.filters.content_type !== null) {
