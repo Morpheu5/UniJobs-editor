@@ -7,7 +7,7 @@ export default {
     data() {
         return {
             statusCode: 404
-        }
+        };
     }
-}
+};
 </script>

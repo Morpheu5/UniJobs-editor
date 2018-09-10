@@ -57,7 +57,7 @@ export default {
             email: '',
             password: '',
             showPassword: false
-        }
+        };
     },
     methods: {
         doTheLogin() {
@@ -67,14 +67,14 @@ export default {
             ).then(response => {
                 if (response.data.token) {
                     localStorage.setItem('unijobs_magic_token', response.data.token);
-                    this.$router.push({ path: this.$route.query.redirect || '/' })
+                    this.$router.push({ path: this.$route.query.redirect || '/' });
                 } else {
                     // TODO Show error maybe?
                 }
             }).catch(error => {
                 console.debug(error);
-            })
+            });
         }
     }
-}
+};
 </script>

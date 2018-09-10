@@ -4,6 +4,11 @@
     </div>    
 </template>
 
+<style lang="scss">
+@import 'assets/custom';
+</style>
+
+
 <script>
 import GlobalNotifications from "./components/GlobalNotifications.vue";
 

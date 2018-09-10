@@ -42,10 +42,10 @@ export default {
         return {
             current_user: {},
             unsavedChanges: false
-        }
+        };
     },
     mounted() {
-        this.$root.$on('unsaved-changes', v => { this.unsavedChanges = v });
+        this.$root.$on('unsaved-changes', v => { this.unsavedChanges = v; });
     },
     beforeDestroy() {
         this.$root.$off('unsaved-changes');

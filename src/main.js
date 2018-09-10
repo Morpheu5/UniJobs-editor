@@ -124,13 +124,13 @@ router.beforeEach((to, from, next) => {
 Vue.mixin({
     methods: {
         availableLocales() {
-            return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-UK", name: "English" } ]
+            return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-UK", name: "English" } ];
         },
         spreadOverLocales(o) {
-            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _.cloneDeep(o)}), {})
+            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _.cloneDeep(o)}), {});
         }
     }
-})
+});
 
 // eslint-disable-next-line
 const vm = new Vue({

@@ -37,7 +37,7 @@ export default {
     watch: {
         block_data: {
             handler: function() {
-                this.$emit('input', this.block_data)
+                this.$emit('input', this.block_data);
             },
             deep: true
         }

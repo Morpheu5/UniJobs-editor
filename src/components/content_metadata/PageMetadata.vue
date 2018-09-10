@@ -14,7 +14,7 @@
 
         <b-card class="mt-3">
             <template slot="header">
-                <h6 class="m-0">Organisation</h6>
+                <h6 class="m-0">Organization</h6>
             </template>
 
             <p v-show="this.thisOrganization.ancestors">Selected: {{ thisOrganization.ancestors | formatPath }}</p>
@@ -73,12 +73,12 @@ export default {
             organizationSearchQueryFetching: false,
 
             organizationSearchResults: []
-        }
+        };
     },
     watch: {
         metadata: {
             handler: function() {
-                this.$emit('input', this.metadata)
+                this.$emit('input', this.metadata);
             },
             deep: true
         },
@@ -129,6 +129,6 @@ export default {
                          .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
         }
     }
-}
+};
 
 </script>
