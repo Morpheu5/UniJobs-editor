@@ -44,6 +44,8 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons/faCalendarAlt';
 import { faTimesCircle } from '@fortawesome/free-regular-svg-icons/faTimesCircle';
+import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
+import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 
 library.add(
     faTrashAlt, faEdit, faUndo,
@@ -51,7 +53,8 @@ library.add(
     faTachometerAlt, faFolder,
     faSearch, faFilter,
     faEye, faEyeSlash,
-    faClock, faArrowUp, faArrowDown, faChevronLeft, faChevronRight, faCalendarAlt, faTimesCircle
+    faClock, faArrowUp, faArrowDown, faChevronLeft, faChevronRight, faCalendarAlt, faTimesCircle,
+    faTimes, faPlus
 );
 
 Vue.config.productionTip = false;

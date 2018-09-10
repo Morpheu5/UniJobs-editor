@@ -8,7 +8,6 @@
                 </b-col>
                 <b-col cols="2">
                     <div class="float-right">
-                        <!-- <b-button size="lg" variant="light" class="my-1">Profile</b-button> -->
                         <b-button size="lg" variant="danger" class="my-1 ml-2" @click="logout">Logout</b-button>
                     </div>
                 </b-col>
@@ -55,10 +54,11 @@ export default {
             .get('/users/whoami')
             .then(response => {
                 this.current_user = response.data;
+                this.$store.commit('setUser', response.data);
             })
-            .catch(error => {
-                console.log(error);
+            .catch(_error => {
                 localStorage.removeItem('unijobs_magic_token');
+                this.$store.commit('setUser', null);
                 this.$router.push({ path: '/login' });
             });
     },
