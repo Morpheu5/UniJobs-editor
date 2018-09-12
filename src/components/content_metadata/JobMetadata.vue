@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-card :class="metadata.job_title.validity ? 'invalid' : ''" no-body class="mt-3 field_container">
+        <b-card :class="metadata.job_title.validity" no-body class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Job title</h6>
             </template>
@@ -12,9 +12,13 @@
                     <b-form-input v-model="metadata.job_title.value[l.code].content" class="validated_input" required></b-form-input>
                 </b-tab>
             </b-tabs>
+
+            <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
 
-        <b-card class="mt-3 field_container">
+        <b-card :class="[metadata.salary.validity, metadata.tax_status.validity].includes('invalid') ? 'invalid' : null" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Salary (&euro;)</h6>
             </template>
@@ -23,6 +27,10 @@
                 <b-radio class="validated_input" value="gross" name="tax_status">Gross</b-radio>
                 <b-radio class="validated_input" value="tax-exempt" name="tax_status">Tax exempt</b-radio>
             </b-radio-group>
+
+            <ul v-show="[...metadata.salary.invalidFeedback, ...metadata.tax_status.validity].length > 0" class="invalid_feedback mt-3">
+                <li v-for="(v, k) in [...metadata.salary.invalidFeedback, ...metadata.tax_status.invalidFeedback]" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
 
         <b-card :class="organization.validity" class="mt-3 field_container">
@@ -30,9 +38,9 @@
                 <h6 class="m-0">Organization</h6>
             </template>
 
-            <p>{{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
             
-            <b-input v-model="organizationSearchQuery" class="validated_input" required placeholder="Type to search Organizations…"></b-input>
+            <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
                 <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
                 <b-list-group v-if="organizationSearchResults.length">
@@ -49,8 +57,8 @@
                     No organizations found.
                 </div>
             </div>
-            <ul v-show="organization.invalidFeedback" class="invalid_feedback">
-                <li v-for="(v,k) in organization.invalidFeedback" :key="k">{{ v }}</li>
+            <ul v-show="organization.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in organization.invalidFeedback" :key="k">{{ v }}</li>
             </ul>
         </b-card>
 
@@ -96,10 +104,6 @@ class JobMetadataData {
         this.tax_status = new Input(data.tax_status);
         this.deadline = new Input(data.deadline);
         this.url = new Input(data.url);
-    }
-
-    validate() {
-        console.log(this);
     }
 };
 
@@ -202,11 +206,47 @@ export default {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
                          .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
         },
-        clearThisOrganization() {
-            this.thisOrganization = {ancestors:[]};
-        },
+        
         validate() {
-            return this.metadata.validate();
+            let valid = true;
+
+            if (Object.entries(this.metadata.job_title.value).some(e => e[1].content === '')) {
+                this.metadata.job_title.validity = 'invalid';
+                this.metadata.job_title.invalidFeedback = ['Missing translations'];
+                valid = false;
+            } else {
+                this.metadata.job_title.validity = 'valid';
+                this.metadata.job_title.invalidFeedback = [];
+            }
+
+            if (this.metadata.salary.value !== '' && this.metadata.tax_status.value === null) {
+                this.metadata.tax_status.validity = 'invalid';
+                this.metadata.tax_status.invalidFeedback = ['If you specify a salary, you must specify a tax status as well'];
+                valid = false;
+            } else {
+                this.metadata.tax_status.validity = 'valid';
+                this.metadata.tax_status.invalidFeedback = [];
+            }
+
+            if (this.metadata.deadline.value === '') {
+                this.metadata.deadline.validity = 'invalid';
+                this.metadata.deadline.invalidFeedback = ['Required field'];
+                valid = false;
+            } else {
+                this.metadata.deadline.validity = 'valid';
+                this.metadata.deadline.invalidFeedback = [];
+            }
+
+            if (this.metadata.url.value === '') {
+                this.metadata.url.validity = 'invalid';
+                this.metadata.url.invalidFeedback = ['Required field'];
+                valid = false;
+            } else {
+                this.metadata.url.validity = 'url';
+                this.metadata.url.invalidFeedback = [];
+            }
+
+            return valid;
         }
     }
 };

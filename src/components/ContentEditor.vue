@@ -23,6 +23,7 @@
                                         </b-form-group>
                                     </b-tab>
                                 </b-tabs>
+
                                 <ul v-show="content.title.invalidFeedback" class="invalid_feedback">
                                     <li v-for="(v,k) in content.title.invalidFeedback" :key="k">{{ v }}</li>
                                 </ul>
@@ -45,7 +46,7 @@
                         </b-row>
                         <b-row class="mt-2">
 
-                            <component v-model="content.content_blocks[i]" :contentId="id" :is="contentTypeToComponentBlockName(block.block_type)" />
+                            <component v-model="content.content_blocks[i]" :contentId="id" :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" class="validatable" />
 
                         </b-row>
                     </div>
@@ -81,7 +82,7 @@
                         
                         <b-form-checkbox id="published" v-model="content.metadata.published">Published</b-form-checkbox>
 
-                        <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" />
+                        <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" />
                     </b-card>
                 </b-col>
             </b-row>
@@ -142,34 +143,10 @@ class Content {
             uuid: this.uuid.value,
             content_type: this.content_type.value,
             title: this.title.value,
-            metadata: this.metadata.value,
+            metadata: this.metadata,
             organization: this.organization.value,
-            content_blocks: this.content_blocks//.map(b => b.value),
+            content_blocks: this.content_blocks,
         };
-    }
-
-    validate() {
-        let valid = true;
-
-        if (Object.entries(this.title.value).some(e => e[1] === '')) {
-            this.title.validity = 'invalid';
-            this.title.invalidFeedback = ['Missing translations.'];
-            valid = false;
-        } else {
-            this.title.validity = 'valid';
-            this.title.invalidFeedback = [];
-        }
-
-        if (!this.organization.value.id) {
-            this.organization.validity = 'invalid';
-            this.organization.invalidFeedback = ['Required field.'];
-            valid = false;
-        } else {
-            this.organization.validity = 'valid';
-            this.organization.invalidFeedback = [];
-        }
-
-        return valid;
     }
 };
 
@@ -273,25 +250,39 @@ export default {
                     return null;
                 });
         },
-        fieldContainer(field) {
-            let w = field;
-            while (w || null) {
-                if (w.classList.contains('field_container')) {
-                    return w;
-                } else {
-                    w = w.parentElement;
-                }
+
+        validate() {
+            let valid = true;
+
+            if (Object.entries(this.content.title.value).some(e => e[1] === '')) {
+                this.content.title.validity = 'invalid';
+                this.content.title.invalidFeedback = ['Missing translations'];
+                valid = false;
+            } else {
+                this.content.title.validity = 'valid';
+                this.content.title.invalidFeedback = [];
             }
-            return null;
+
+            if (!this.content.organization.value.id) {
+                this.content.organization.validity = 'invalid';
+                this.content.organization.invalidFeedback = ['Required field.'];
+                valid = false;
+            } else {
+                this.content.organization.validity = 'valid';
+                this.content.organization.invalidFeedback = [];
+            }
+
+            const validatable = this.$children.filter(e => e.$el.classList.contains('validatable'));
+            const a = validatable.map(e => e.validate()).reduce((a, e) => a && e);
+
+            return valid && a;
         },
-        validateForm() {
-            this.content.validate();
-        },
+
         saveContent(event) {
             event.preventDefault();
             event.stopPropagation();
 
-            const valid = this.content.validate();
+            const valid = this.validate();
             console.log({ valid });
             // this.validated = true;
 

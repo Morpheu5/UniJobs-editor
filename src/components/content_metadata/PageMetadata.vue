@@ -1,23 +1,29 @@
 <template>
     <div>
-        <b-card class="mt-3">
+        <b-card :class="metadata.slug.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">URL Slug</h6>
             </template>
 
             <b-form-group>
                 <b-input id="page_metadata_url_slug"
-                         v-model="metadata.slug"
+                         v-model="metadata.slug.value"
                 />
             </b-form-group>
+
+            <ul v-show="metadata.slug.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.slug.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
 
-        <b-card class="mt-3">
+        {{ thisOrganization }}
+
+        <!-- <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Organization</h6>
             </template>
 
-            <p v-show="this.thisOrganization.ancestors">Selected: {{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
             
             <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
@@ -36,12 +42,23 @@
                     No organizations found.
                 </div>
             </div>
-        </b-card>
+            <ul v-show="organization.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in organization.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
+        </b-card> -->
     </div>
 </template>
 
 <script>
 import _ from 'lodash';
+import Input from '../Input';
+
+class PageMetadataData {
+    constructor(data) {
+        this.published = new Input(data.published);
+        this.slug = new Input(data.slug);
+    }
+};
 
 export default {
     filters: {
@@ -61,12 +78,12 @@ export default {
     },
     data() {
         return {
-            metadata: _.merge({
+            metadata: new PageMetadataData(_.merge({
                 published: false,
                 slug: ''
-            }, this.value),
+            }, this.value)),
 
-            thisOrganization: _.cloneDeep(this.organization),
+            thisOrganization: _.cloneDeep(this.organization.value),
             
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
@@ -127,6 +144,21 @@ export default {
         flattenForest(forest) {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
                          .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
+        },
+
+        validate() {
+            let valid = true;
+
+            if (this.metadata.slug.value === '') {
+                this.metadata.slug.validity = 'invalid';
+                this.metadata.slug.invalidFeedback = ['Required field'];
+                valid = false;
+            } else {
+                this.metadata.slug.validity = 'valid';
+                this.metadata.slug.invalidFeedback = [];
+            }
+
+            return valid;
         }
     }
 };
