@@ -1,38 +1,38 @@
 <template>
     <div>
-        <b-card no-body class="mt-3">
+        <b-card :class="metadata.job_title.validity ? 'invalid' : ''" no-body class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Job title</h6>
             </template>
             <b-tabs card>
                 <b-tab v-for="l in availableLocales()" :key="l.name">
                     <template slot="title">
-                        {{ l.name }} <span v-show="!metadata.job_title[l.code] || metadata.job_title[l.code].content == ''" class="missing">*</span>
+                        {{ l.name }} <span v-show="!metadata.job_title.value[l.code] || metadata.job_title.value[l.code].content == ''" class="missing">*</span>
                     </template>
-                    <b-form-input v-model="metadata.job_title[l.code].content"></b-form-input>
+                    <b-form-input v-model="metadata.job_title.value[l.code].content" class="validated_input" required></b-form-input>
                 </b-tab>
             </b-tabs>
         </b-card>
 
-        <b-card class="mt-3">
+        <b-card class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Salary (&euro;)</h6>
             </template>
-            <b-form-input v-model="metadata.salary" placeholder="e.g., 20000, 24000-30000…"></b-form-input>
-            <b-radio-group id="tax_status" v-model="metadata.tax_status" class="mt-3">
-                <b-radio value="gross">Gross</b-radio>
-                <b-radio value="tax-exempt">Tax exempt</b-radio>
+            <b-form-input v-model="metadata.salary.value" placeholder="e.g., 20000, 24000-30000…" required></b-form-input>
+            <b-radio-group id="tax_status" v-model="metadata.tax_status.value" class="mt-3" required>
+                <b-radio class="validated_input" value="gross" name="tax_status">Gross</b-radio>
+                <b-radio class="validated_input" value="tax-exempt" name="tax_status">Tax exempt</b-radio>
             </b-radio-group>
         </b-card>
 
-        <b-card class="mt-3">
+        <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Organization</h6>
             </template>
 
             <p>{{ thisOrganization.ancestors | formatPath }}</p>
             
-            <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
+            <b-input v-model="organizationSearchQuery" class="validated_input" required placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
                 <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
                 <b-list-group v-if="organizationSearchResults.length">
@@ -49,6 +49,9 @@
                     No organizations found.
                 </div>
             </div>
+            <ul v-show="organization.invalidFeedback" class="invalid_feedback">
+                <li v-for="(v,k) in organization.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
 
         <b-card class="mt-3">
@@ -57,8 +60,8 @@
             </template>
 
             <b-input-group>
-                <b-input-group-text slot="append"><fa :icon="['far', 'calendar-alt']" /></b-input-group-text>
-                <flat-pickr v-model="metadata.deadline"
+                <b-input-group-text slot="append" class="validated_input" required><fa :icon="['far', 'calendar-alt']" /></b-input-group-text>
+                <flat-pickr v-model="metadata.deadline.value"
                             :config="deadlinePickerOptions"
                 />
             </b-input-group>
@@ -71,9 +74,9 @@
             <b-tabs card>
                 <b-tab v-for="l in availableLocales()" :key="l.name">
                     <template slot="title">
-                        {{ l.name }} <span v-show="!metadata.url[l.code] || metadata.url[l.code].content == ''" class="missing">*</span>
+                        {{ l.name }} <span v-show="!metadata.url.value[l.code] || metadata.url.value[l.code].content == ''" class="missing">*</span>
                     </template>
-                    <b-form-input v-model="metadata.url[l.code].content"></b-form-input>
+                    <b-form-input v-model="metadata.url.value[l.code].content" class="validated_input" required></b-form-input>
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -82,6 +85,23 @@
 
 <script>
 import _ from 'lodash';
+
+import Input from '../Input.js';
+
+class JobMetadataData {
+    constructor(data) {
+        this.published = new Input(data.published);
+        this.job_title = new Input(data.job_title);
+        this.salary = new Input(data.salary);
+        this.tax_status = new Input(data.tax_status);
+        this.deadline = new Input(data.deadline);
+        this.url = new Input(data.url);
+    }
+
+    validate() {
+        console.log(this);
+    }
+};
 
 export default {
     filters: {
@@ -101,16 +121,16 @@ export default {
     },
     data() {
         return {
-            metadata: _.merge({
+            metadata: new JobMetadataData(_.merge({
                 published: false,
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
                 tax_status: null,
                 deadline: new Date(),
                 url: this.spreadOverLocales({ content: '' })
-            }, this.value),
+            }, this.value)),
 
-            thisOrganization: _.cloneDeep(this.organization),
+            thisOrganization: _.cloneDeep(this.organization.value),
             
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
@@ -181,6 +201,12 @@ export default {
         flattenForest(forest) {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
                          .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
+        },
+        clearThisOrganization() {
+            this.thisOrganization = {ancestors:[]};
+        },
+        validate() {
+            return this.metadata.validate();
         }
     }
 };

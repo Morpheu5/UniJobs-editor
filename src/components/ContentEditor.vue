@@ -1,20 +1,31 @@
 <template>
-    <div id="content-editor">
-        <b-form @submit="saveContent">
+    <div id="content_editor">
+        <b-form id="content_editor_form" :validated="validated" novalidate @submit="saveContent">
             <b-row v-if="content">
                 <b-col>
                     <b-row class="mt-3">
                         <b-col>
                             <h3>Title</h3>
-                            <b-card no-body>
+                            <b-card :class="content.title.validity" no-body class="field_container">
                                 <b-tabs card>
                                     <b-tab v-for="l in availableLocales()" :key="`title-${l.code}`">
                                         <template slot="title">
-                                            {{ l.name }} <span v-show="!content.title[l.code] || content.title[l.code] == ''" class="missing">(missing)</span>
+                                            {{ l.name }} <span v-show="!content.title.value[l.code] || content.title.value[l.code] == ''" class="missing">*</span>
                                         </template>
-                                        <b-form-input v-model="content.title[l.code]" type="text" placeholder="Enter a title" />
+                                        <b-form-group>
+                                            <b-form-input
+                                                v-model="content.title.value[l.code]"
+                                                class="validated_input"
+                                                type="text"
+                                                placeholder="Enter a title"
+                                                required
+                                            />
+                                        </b-form-group>
                                     </b-tab>
                                 </b-tabs>
+                                <ul v-show="content.title.invalidFeedback" class="invalid_feedback">
+                                    <li v-for="(v,k) in content.title.invalidFeedback" :key="k">{{ v }}</li>
+                                </ul>
                             </b-card>
                         </b-col>
                     </b-row>
@@ -70,7 +81,7 @@
                         
                         <b-form-checkbox id="published" v-model="content.metadata.published">Published</b-form-checkbox>
 
-                        <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type)" />
+                        <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" />
                     </b-card>
                 </b-col>
             </b-row>
@@ -88,12 +99,79 @@
     </div>
 </template>
 
+<style lang="scss">
+@import '../assets/custom';
+
+.missing {
+    color: theme-color('danger');
+}
+
+.field_container.invalid {
+    border-color: theme-color('danger');
+
+    .invalid_feedback {
+        color: theme-color('danger');
+    }
+}
+</style>
+
+
 <script>
 import _ from "lodash";
 import uuidv4 from "uuid/v4";
 
+import Input from "./Input.js";
+
 import JobMetadata from "./content_metadata/JobMetadata";
 import PageMetadata from "./content_metadata/PageMetadata";
+
+class Content {
+    constructor(content) {
+        this.id = new Input(content.id);
+        this.uuid = new Input(content.uuid);
+        this.content_type = new Input(content.content_type);
+        this.title = new Input(content.title);
+        this.metadata = content.metadata;
+        this.organization = new Input(content.organization);
+        this.content_blocks = content.content_blocks;
+    }
+
+    get document() {
+        return {
+            id: this.id.value,
+            uuid: this.uuid.value,
+            content_type: this.content_type.value,
+            title: this.title.value,
+            metadata: this.metadata.value,
+            organization: this.organization.value,
+            content_blocks: this.content_blocks//.map(b => b.value),
+        };
+    }
+
+    validate() {
+        let valid = true;
+
+        if (Object.entries(this.title.value).some(e => e[1] === '')) {
+            this.title.validity = 'invalid';
+            this.title.invalidFeedback = ['Missing translations.'];
+            valid = false;
+        } else {
+            this.title.validity = 'valid';
+            this.title.invalidFeedback = [];
+        }
+
+        if (!this.organization.value.id) {
+            this.organization.validity = 'invalid';
+            this.organization.invalidFeedback = ['Required field.'];
+            valid = false;
+        } else {
+            this.organization.validity = 'valid';
+            this.organization.invalidFeedback = [];
+        }
+
+        return valid;
+    }
+};
 
 export default {
     components: {
@@ -115,24 +193,26 @@ export default {
             content: null,
             referenceDocument: null,
             documentDirty: false,
+            validated: false,
         };
     },
     watch: {
         content: {
             handler: _.debounce(function() {
-                if (_.isEqual(this.content, this.referenceDocument)) {
+                if (_.isEqual(this.content.document, this.referenceDocument.document)) {
                     this.documentDirty = false;
                 } else {
                     this.documentDirty = true;
+                    this.validated = false;
                 }
                 this.$root.$emit('unsaved-changes', this.documentDirty);
-            }, 500),
+            }, 250),
             deep: true
         }
     },
     created() {
         if (this.id === 'new') {
-            this.content = {
+            const contentArgs = {
                 id: null,
                 uuid: 0,
                 content_type: this.$route.params.content_type,
@@ -141,14 +221,21 @@ export default {
                 organization: {},
                 content_blocks: []
             };
-            this.referenceDocument = _.cloneDeep(this.content);
+            this.content = new Content(_.cloneDeep(contentArgs));
+            this.referenceDocument = new Content(_.cloneDeep(contentArgs));
         } else {
-            this.fetchContent();
+            this.fetchContent()
+                .then(contentArgs => {
+                    if (null !== contentArgs) {
+                        this.content = new Content(_.cloneDeep(contentArgs));
+                        this.referenceDocument = new Content(_.cloneDeep(contentArgs));
+                    }
+                });
         }
     },
     methods: {
         updateOrganization(e) {
-            this.content.organization = _.cloneDeep(e);
+            this.content.organization.value = _.cloneDeep(e);
         },
         addContentBlock(blockType) {
             this.content.content_blocks = [
@@ -162,7 +249,7 @@ export default {
             ];
         },
         fetchContent() {
-            this.$axios
+            return this.$axios
                 .get(`/contents/${this.id}`)
                 .then(response => {
                     // Add the "delete" property on the fly to the response data before assigning it
@@ -176,24 +263,44 @@ export default {
                         }
                         i += 1;
                     }
-                    this.content = _.cloneDeep(response.data);
-                    this.referenceDocument = _.cloneDeep(response.data);
+                    return response.data;
                 })
                 .catch(error => {
-                    this.content = null;
                     this.$root.$emit("global-notification", {
                         type: "danger",
                         message: `Could not retrieve content.<br/>${error}`
                     });
+                    return null;
                 });
+        },
+        fieldContainer(field) {
+            let w = field;
+            while (w || null) {
+                if (w.classList.contains('field_container')) {
+                    return w;
+                } else {
+                    w = w.parentElement;
+                }
+            }
+            return null;
+        },
+        validateForm() {
+            this.content.validate();
         },
         saveContent(event) {
             event.preventDefault();
             event.stopPropagation();
+
+            const valid = this.content.validate();
+            console.log({ valid });
+            // this.validated = true;
+
+            return;
+
             // Prepare the request for the content
             const contentParams = {
                 data: _.merge(
-                    _.omit(this.content, ["id", "content_blocks", "organization"]),
+                    _.omit(this.content.document, ["id", "content_blocks", "organization"]),
                     {
                         organization_id: this.content.organization.id,
                         content_blocks_attributes: this.content.content_blocks,
@@ -202,35 +309,43 @@ export default {
             };
             if (this.id === 'new') {
                 // Create (POST)
-                this.$axios.post('/contents', contentParams)
-                .then(response => {
-                    // Content created!
-                    this.$router.push({ path: `/contents/${response.data.id}/edit`});
-                    this.$router.go();
-                }).catch(error => {
-                    // Error creating the content
-                    this.$root.$emit("global-notification", {
-                        type: "danger",
-                        message: `Something went wrong while saving this content.<br/>${error}`
+                this.$axios
+                    .post('/contents', contentParams)
+                    .then(response => {
+                        // Content created!
+                        this.$router.push({ path: `/contents/${response.data.id}/edit`});
+                        this.$router.go();
+                    }).catch(error => {
+                        // Error creating the content
+                        this.$root.$emit("global-notification", {
+                            type: "danger",
+                            message: `Something went wrong while saving this content.<br/>${error}`
+                        });
                     });
-                });
-            } else if (this.content.id) {
+            } else if (this.content.document.id) {
                 // Edit (PATCH)
-                this.$axios.patch(`/contents/${this.content.id}`, contentParams)
-                .then(_response => {
-                    // Content edited!
-                    this.fetchContent();
-                    this.$root.$emit("global-notification", {
-                        type: "success",
-                        message: "Content saved correctly."
+                this.$axios
+                    .patch(`/contents/${this.content.document.id}`, contentParams)
+                    .then(_response => {
+                        // Content edited!
+                        this.fetchContent()
+                            .then(contentArgs => {
+                                if (null !== contentArgs) {
+                                    this.content = new Content(contentArgs);
+                                    this.referenceDocument = new Content(contentArgs);
+                                }
+                            });
+                        this.$root.$emit("global-notification", {
+                            type: "success",
+                            message: "Content saved correctly."
+                        });
+                    }).catch(error => {
+                        // Error editing the content
+                        this.$root.$emit("global-notification", {
+                            type: "danger",
+                            message: `Something went wrong while saving this content.<br/>${error}`
+                        });
                     });
-                }).catch(error => {
-                    // Error editing the content
-                    this.$root.$emit("global-notification", {
-                        type: "danger",
-                        message: `Something went wrong while saving this content.<br/>${error}`
-                    });
-                });
             } else {
                 // This is weird...
             }
