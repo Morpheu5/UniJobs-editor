@@ -60,6 +60,13 @@ class PageMetadataData {
         this.published = new Input(data.published);
         this.slug = new Input(data.slug);
     }
+
+    get document() {
+        return {
+            published: this.published.value,
+            slug: this.slug.value,
+        };
+    }
 };
 
 export default {
@@ -113,6 +120,9 @@ export default {
                 this.fetchOrganizations();
             }
         }
+    },
+    created() {
+        // this.$emit('input', this.metadata);
     },
     methods: {
         fetchOrganizations: _debounce(function() {

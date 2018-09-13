@@ -98,7 +98,7 @@ const routes = [
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "contents", component: ContentsList },
-            { path: "contents/:content_type/new", component: ContentEditor, props: { id: "new" } },
+            { path: "contents/:content_type/new", component: ContentEditor, props: route => ({ id: "new", content_type: route.params['content_type'] }) },
             { path: "contents/:id/edit", component: ContentEditor, props: true },
         ]
     },

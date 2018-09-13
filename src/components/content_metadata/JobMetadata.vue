@@ -108,6 +108,17 @@ class JobMetadataData {
         this.deadline = new Input(data.deadline);
         this.url = new Input(data.url);
     }
+
+    get document() {
+        return {
+            published: this.published.value,
+            job_title: this.job_title.value,
+            salary: this.salary.value,
+            tax_status: this.tax_status.value,
+            deadline: this.deadline.value,
+            url: this.url.value,
+        };
+    }
 };
 
 export default {
