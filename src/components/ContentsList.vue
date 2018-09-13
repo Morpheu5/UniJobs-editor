@@ -105,6 +105,9 @@
 
 
 <script>
+import _uniq from 'lodash/uniq';
+import _capitalize from 'lodash/capitalize';
+
 export default {
     filters: {
         formatDate(d) {
@@ -135,7 +138,7 @@ export default {
         },
         contentTypes() {
             let options = [{ value: null, text: "Content Type"}];
-            let otherOptions = _.uniq(this.contents.map(c => c.content_type)).map(t => ({ value: t, text: _.capitalize(t)}));
+            let otherOptions = _uniq(this.contents.map(c => c.content_type)).map(t => ({ value: t, text: _capitalize(t)}));
             return [...options, ...otherOptions];
         },
         contentTypesForCreation() {

@@ -18,7 +18,7 @@
 
         {{ thisOrganization }}
 
-        <!-- <b-card :class="organization.validity" class="mt-3 field_container">
+        <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Organization</h6>
             </template>
@@ -45,12 +45,16 @@
             <ul v-show="organization.invalidFeedback.length > 0" class="invalid_feedback">
                 <li v-for="(v, k) in organization.invalidFeedback" :key="k">{{ v }}</li>
             </ul>
-        </b-card> -->
+        </b-card>
     </div>
 </template>
 
 <script>
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
+import _debounce from 'lodash/debounce';
+import _merge from 'lodash/merge';
+import _omit from 'lodash/omit';
+
 import Input from '../Input';
 
 class PageMetadataData {
@@ -78,12 +82,12 @@ export default {
     },
     data() {
         return {
-            metadata: new PageMetadataData(_.merge({
+            metadata: new PageMetadataData(_merge({
                 published: false,
                 slug: ''
             }, this.value)),
 
-            thisOrganization: _.cloneDeep(this.organization.value),
+            thisOrganization: _cloneDeep(this.organization.value),
             
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
@@ -101,7 +105,7 @@ export default {
         },
         thisOrganization: {
             handler: function(newOrg) {
-                _.merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
+                _merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
                 this.$parent.updateOrganization(this.thisOrganization);
             }
         },
@@ -113,7 +117,7 @@ export default {
         }
     },
     methods: {
-        fetchOrganizations: _.debounce(function() {
+        fetchOrganizations: _debounce(function() {
             this.organizationSearchQueryFetching = true;
 
             let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w != '');
@@ -135,7 +139,7 @@ export default {
             });
         }, 500),
         flattenTree(node, path = []) {
-            let _path = [...path, _.omit(node, 'children')];
+            let _path = [...path, _omit(node, 'children')];
             if (node.children) {
                 return node.children.reduce((accumulator, child) => accumulator.concat(this.flattenTree(child, _path)), []);
             }

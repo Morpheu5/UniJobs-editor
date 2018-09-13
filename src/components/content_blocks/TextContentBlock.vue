@@ -18,6 +18,7 @@
 
 <script>
 import Input from '../Input';
+import _merge from 'lodash/merge';
 
 export default {
     props: {
@@ -32,7 +33,7 @@ export default {
     },
     data: function() {
         return {
-            block_data: new Input(_.merge({
+            block_data: new Input(_merge({
                 block_type: 'text',
                 uuid: 'uuidv4()',
                 body: this.spreadOverLocales({ content: '' })

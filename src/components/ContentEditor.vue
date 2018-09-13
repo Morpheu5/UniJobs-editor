@@ -118,7 +118,16 @@
 
 
 <script>
-import _ from "lodash";
+import _camelCase from 'lodash/camelCase';
+import _capitalize from 'lodash/capitalize';
+import _clone from 'lodash/clone';
+import _cloneDeep from 'lodash/cloneDeep';
+import _debounce from 'lodash/debounce';
+import _isEqual from 'lodash/isEqual';
+import _last from 'lodash/last';
+import _merge from 'lodash/merge';
+import _omit from 'lodash/omit';
+
 import uuidv4 from "uuid/v4";
 
 import Input from "./Input.js";
@@ -175,8 +184,8 @@ export default {
     },
     watch: {
         content: {
-            handler: _.debounce(function() {
-                if (_.isEqual(this.content.document, this.referenceDocument.document)) {
+            handler: _debounce(function() {
+                if (_isEqual(this.content.document, this.referenceDocument.document)) {
                     this.documentDirty = false;
                 } else {
                     this.documentDirty = true;
@@ -198,21 +207,21 @@ export default {
                 organization: {},
                 content_blocks: []
             };
-            this.content = new Content(_.cloneDeep(contentArgs));
-            this.referenceDocument = new Content(_.cloneDeep(contentArgs));
+            this.content = new Content(_cloneDeep(contentArgs));
+            this.referenceDocument = new Content(_cloneDeep(contentArgs));
         } else {
             this.fetchContent()
                 .then(contentArgs => {
                     if (null !== contentArgs) {
-                        this.content = new Content(_.cloneDeep(contentArgs));
-                        this.referenceDocument = new Content(_.cloneDeep(contentArgs));
+                        this.content = new Content(_cloneDeep(contentArgs));
+                        this.referenceDocument = new Content(_cloneDeep(contentArgs));
                     }
                 });
         }
     },
     methods: {
         updateOrganization(e) {
-            this.content.organization.value = _.cloneDeep(e);
+            this.content.organization.value = _cloneDeep(e);
         },
         addContentBlock(blockType) {
             this.content.content_blocks = [
@@ -221,7 +230,7 @@ export default {
                     block_type: blockType,
                     uuid: uuidv4(),
                     delete: false,
-                    order: this.content.content_blocks.length > 0 ? _.last(this.content.content_blocks).order + 1 : 1
+                    order: this.content.content_blocks.length > 0 ? _last(this.content.content_blocks).order + 1 : 1
                 }
             ];
         },
@@ -231,12 +240,12 @@ export default {
                 .then(response => {
                     // Add the "delete" property on the fly to the response data before assigning it
                     // to the component, otherwise stuff will not bind to it.
-                    let q = _.clone(response.data.content_blocks);
+                    let q = _clone(response.data.content_blocks);
                     let i = 0;
                     while (i < q.length) {
                         q[i].delete = false;
                         if (q[i].content_blocks) {
-                            q.push(_.clone(q[i].content_blocks));
+                            q.push(_clone(q[i].content_blocks));
                         }
                         i += 1;
                     }
@@ -290,8 +299,8 @@ export default {
 
             // Prepare the request for the content
             const contentParams = {
-                data: _.merge(
-                    _.omit(this.content.document, ["id", "content_blocks", "organization"]),
+                data: _merge(
+                    _omit(this.content.document, ["id", "content_blocks", "organization"]),
                     {
                         organization_id: this.content.organization.id,
                         content_blocks_attributes: this.content.content_blocks,
@@ -345,10 +354,10 @@ export default {
             // TODO: Implement this.
         },
         contentTypeToComponentBlockName(n) {
-            return `${_.capitalize(_.camelCase(n))}ContentBlock`;
+            return `${_capitalize(_camelCase(n))}ContentBlock`;
         },
         contentTypeToComponentMetaName(n) {
-            return `${_.capitalize(_.camelCase(n))}Metadata`;
+            return `${_capitalize(_camelCase(n))}Metadata`;
         }
     }
 };

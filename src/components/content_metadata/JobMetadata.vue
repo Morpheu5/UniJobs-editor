@@ -92,7 +92,10 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
+import _debounce from 'lodash/debounce';
+import _merge from 'lodash/merge';
+import _omit from 'lodash/omit';
 
 import Input from '../Input.js';
 
@@ -125,7 +128,7 @@ export default {
     },
     data() {
         return {
-            metadata: new JobMetadataData(_.merge({
+            metadata: new JobMetadataData(_merge({
                 published: false,
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
@@ -134,7 +137,7 @@ export default {
                 url: this.spreadOverLocales({ content: '' })
             }, this.value)),
 
-            thisOrganization: _.cloneDeep(this.organization.value),
+            thisOrganization: _cloneDeep(this.organization.value),
             
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
@@ -162,7 +165,7 @@ export default {
         },
         thisOrganization: {
             handler: function(newOrg) {
-                _.merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
+                _merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
                 this.$parent.updateOrganization(this.thisOrganization);
             }
         },
@@ -174,7 +177,7 @@ export default {
         }
     },
     methods: {
-        fetchOrganizations: _.debounce(function() {
+        fetchOrganizations: _debounce(function() {
             this.organizationSearchQueryFetching = true;
 
             let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w != '');
@@ -196,7 +199,7 @@ export default {
             });
         }, 500),
         flattenTree(node, path = []) {
-            let _path = [...path, _.omit(node, 'children')];
+            let _path = [...path, _omit(node, 'children')];
             if (node.children) {
                 return node.children.reduce((accumulator, child) => accumulator.concat(this.flattenTree(child, _path)), []);
             }

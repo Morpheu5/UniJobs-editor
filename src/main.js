@@ -3,6 +3,9 @@ import VueRouter from "vue-router";
 
 import axios from "axios";
 
+import _startCase from 'lodash/startCase';
+import _cloneDeep from 'lodash/cloneDeep';
+
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/scss/bootstrap.scss";
 import "bootstrap-vue/dist/bootstrap-vue.min.css";
@@ -85,7 +88,7 @@ Vue.prototype.$axios = axiosObject;
 
 Vue.filter('titleCase', function(value) {
     if (!value) return '';
-    return _.startCase(value);
+    return _startCase(value);
 });
 
 const routes = [
@@ -130,7 +133,7 @@ Vue.mixin({
             return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-UK", name: "English" } ];
         },
         spreadOverLocales(o) {
-            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _.cloneDeep(o)}), {});
+            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _cloneDeep(o)}), {});
         }
     }
 });
