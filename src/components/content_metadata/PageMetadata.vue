@@ -16,14 +16,12 @@
             </ul>
         </b-card>
 
-        {{ thisOrganization }}
-
         <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Organization</h6>
             </template>
 
-            <p v-show="thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
             
             <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
             <div class="mt-3">
