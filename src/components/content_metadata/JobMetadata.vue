@@ -1,5 +1,7 @@
 <template>
     <div>
+        <b-form-checkbox id="published" v-model="metadata.published.value">Published</b-form-checkbox>
+
         <b-card :class="metadata.job_title.validity" no-body class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Job title</h6>
@@ -170,7 +172,7 @@ export default {
     watch: {
         metadata: {
             handler: function() {
-                this.$emit('input', this.metadata);
+                this.$emit('input', this.metadata.document);
             },
             deep: true
         },

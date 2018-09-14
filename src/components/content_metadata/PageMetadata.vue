@@ -1,5 +1,7 @@
 <template>
     <div>
+        <b-form-checkbox id="published" v-model="metadata.published.value">Published</b-form-checkbox>
+
         <b-card :class="metadata.slug.validity" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">URL Slug</h6>
@@ -104,7 +106,7 @@ export default {
     watch: {
         metadata: {
             handler: function() {
-                this.$emit('input', this.metadata);
+                this.$emit('input', this.metadata.document);
             },
             deep: true
         },

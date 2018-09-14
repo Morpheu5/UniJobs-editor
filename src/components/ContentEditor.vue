@@ -78,8 +78,6 @@
                     <template slot="header">
                         <h6 class="m-0">Meta</h6>
                     </template>
-                    
-                    <b-form-checkbox id="published" v-model="content.metadata.published">Published</b-form-checkbox>
 
                     <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" />
                 </b-card>
