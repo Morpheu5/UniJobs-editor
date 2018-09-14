@@ -11,7 +11,7 @@
                     <template slot="title">
                         {{ l.name }} <span v-show="!metadata.job_title.value[l.code] || metadata.job_title.value[l.code].content == ''" class="missing">*</span>
                     </template>
-                    <b-form-input v-model="metadata.job_title.value[l.code].content" class="validated_input" required></b-form-input>
+                    <b-form-input v-model="metadata.job_title.value[l.code].content" required></b-form-input>
                 </b-tab>
             </b-tabs>
 
@@ -26,8 +26,8 @@
             </template>
             <b-form-input v-model="metadata.salary.value" placeholder="e.g., 20000, 24000-30000…" required></b-form-input>
             <b-radio-group id="tax_status" v-model="metadata.tax_status.value" class="mt-3" required>
-                <b-radio class="validated_input" value="gross" name="tax_status">Gross</b-radio>
-                <b-radio class="validated_input" value="tax-exempt" name="tax_status">Tax exempt</b-radio>
+                <b-radio value="gross" name="tax_status">Gross</b-radio>
+                <b-radio value="tax-exempt" name="tax_status">Tax exempt</b-radio>
             </b-radio-group>
 
             <ul v-show="[...metadata.salary.invalidFeedback, ...metadata.tax_status.validity].length > 0" class="invalid_feedback mt-3">
@@ -40,9 +40,16 @@
                 <h6 class="m-0">Organization</h6>
             </template>
 
-            <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">
+                <fa :icon="['fas', 'times']" size="sm" class="mr-1 text-danger" @click="thisOrganization = { ancestors: [] }" /> {{ thisOrganization.ancestors | formatPath }}
+            </p>
             
-            <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
+            <b-input-group>
+                <b-input-group-text slot="append" :class="organizationSearchQuery ? 'bg-primary border-primary' : ''" @click="organizationSearchQuery = ''">
+                    <fa :icon="['fas', organizationSearchQuery ? 'times' : 'search']" :class="organizationSearchQuery ? 'text-white' : ''" />
+                </b-input-group-text>
+                <b-input v-model="organizationSearchQuery" placeholder="Type to search…"></b-input>
+            </b-input-group>
             <div class="mt-3">
                 <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
                 <b-list-group v-if="organizationSearchResults.length">
@@ -64,20 +71,24 @@
             </ul>
         </b-card>
 
-        <b-card class="mt-3">
+        <b-card :class="metadata.deadline.validity" class="mt-3">
             <template slot="header">
                 <h6 class="m-0">Application Deadline</h6>
             </template>
 
             <b-input-group>
-                <b-input-group-text slot="append" class="validated_input" required><fa :icon="['far', 'calendar-alt']" /></b-input-group-text>
+                <b-input-group-text slot="append" required><fa :icon="['far', 'calendar-alt']" /></b-input-group-text>
                 <flat-pickr v-model="metadata.deadline.value"
                             :config="deadlinePickerOptions"
                 />
             </b-input-group>
+
+            <ul v-show="metadata.deadline.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.deadline.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
 
-        <b-card no-body class="mt-3">
+        <b-card :class="metadata.url.validity" no-body class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Application URL</h6>
             </template>
@@ -86,12 +97,23 @@
                     <template slot="title">
                         {{ l.name }} <span v-show="!metadata.url.value[l.code] || metadata.url.value[l.code].content == ''" class="missing">*</span>
                     </template>
-                    <b-form-input v-model="metadata.url.value[l.code].content" class="validated_input" required></b-form-input>
+                    <b-form-input v-model="metadata.url.value[l.code].content" required></b-form-input>
                 </b-tab>
             </b-tabs>
+
+            <ul v-show="metadata.url.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.url.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
         </b-card>
     </div>
 </template>
+
+<style lang="scss">
+input.flatpickr-input.form-control {
+    background: white;
+}
+</style>
+
 
 <script>
 import _cloneDeep from 'lodash/cloneDeep';
@@ -164,7 +186,7 @@ export default {
                 altInput: true,
                 enableTime: true,
                 time_24hr: true,
-                allowInput: true,
+                allowInput: false,
                 wrap: true
             }
         };
@@ -253,12 +275,12 @@ export default {
                 this.metadata.deadline.invalidFeedback = [];
             }
 
-            if (this.metadata.url.value === '') {
+            if (Object.entries(this.metadata.url.value).some(e => e[1].content === '')) {
                 this.metadata.url.validity = 'invalid';
-                this.metadata.url.invalidFeedback = ['Required field'];
+                this.metadata.url.invalidFeedback = ['Missing URLs'];
                 valid = false;
             } else {
-                this.metadata.url.validity = 'url';
+                this.metadata.url.validity = 'valid';
                 this.metadata.url.invalidFeedback = [];
             }
 

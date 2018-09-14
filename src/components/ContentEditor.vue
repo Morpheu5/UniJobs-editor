@@ -14,7 +14,6 @@
                                     <b-form-group>
                                         <b-form-input
                                             v-model="content.title.value[l.code]"
-                                            class="validated_input"
                                             type="text"
                                             placeholder="Enter a title"
                                             required
@@ -288,7 +287,6 @@ export default {
             if (!this.validate()) {
                 return;
             }
-
             // Prepare the request for the content
             const contentParams = {
                 data: _merge(
@@ -296,10 +294,10 @@ export default {
                     {
                         organization_id: this.content.document.organization.id,
                         content_blocks_attributes: this.content.content_blocks,
+                        user_id: this.$store.state.user.id,
                     }
                 )
             };
-            debugger;
             if (this.id === 'new') {
                 // Create (POST)
                 this.$axios

@@ -23,9 +23,16 @@
                 <h6 class="m-0">Organization</h6>
             </template>
 
-            <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">{{ thisOrganization.ancestors | formatPath }}</p>
+            <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">
+                <fa :icon="['fas', 'times']" size="sm" class="mr-1 text-danger" @click="thisOrganization = { ancestors: [] }" /> {{ thisOrganization.ancestors | formatPath }}
+            </p>
             
-            <b-input v-model="organizationSearchQuery" placeholder="Type to search Organizations…"></b-input>
+            <b-input-group>
+                <b-input-group-text slot="append" :class="organizationSearchQuery ? 'bg-primary border-primary' : ''" @click="organizationSearchQuery = ''">
+                    <fa :icon="['fas', organizationSearchQuery ? 'times' : 'search']" :class="organizationSearchQuery ? 'text-white' : ''" />
+                </b-input-group-text>
+                <b-input v-model="organizationSearchQuery" placeholder="Type to search…"></b-input>
+            </b-input-group>
             <div class="mt-3">
                 <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
                 <b-list-group v-if="organizationSearchResults.length">
