@@ -61,14 +61,6 @@
                         </b-col>
                     </b-row>
                 </div>
-
-                <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent">
-                    <p><strong>This action is permanent</strong>.</p>
-                    <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
-                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
-                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
-                </b-modal>
-
             </b-col>
 
             <b-col class="sidebar" cols="4">
@@ -89,6 +81,13 @@
                         <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveContent">Save</b-button>
                     </div>
                 </b-card>
+
+                <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent">
+                    <p><strong>This action is permanent</strong>.</p>
+                    <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
+                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
+                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
+                </b-modal>
             </b-col>
         </b-row>
     </div>
@@ -345,7 +344,21 @@ export default {
             }
         },
         deleteContent() {
-            // TODO: Implement this.
+            this.$axios
+                .delete(`/contents/${this.content.document.id}`)
+                .then(_response => {
+                this.$router.push({ path: '/contents', });
+                    this.$root.$emit("global-notification", {
+                        type: "success",
+                        message: "Content deleted succesfully."
+                    });
+                })
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `Something went wrong while deleting this content.<br/>${error}`
+                    });
+                });
         },
         contentTypeToComponentBlockName(n) {
             return `${_capitalize(_camelCase(n))}ContentBlock`;

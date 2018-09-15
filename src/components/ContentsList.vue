@@ -48,7 +48,7 @@
             <b-row v-for="(content, index) in filteredContents" :key="content.uuid" :class="{ even: (index%2), odd: !(index%2), first: !index, last: index == contents.length-1 }" class="py-2 content no-gutters" >
                 <b-col cols="1">
                     <div class="text-center mt-2">
-                        <b-button variant="link text-danger" class="pl-1 pr-0 mx-0">
+                        <b-button v-b-modal.deleteContentModal variant="link text-danger" class="pl-1 pr-0 mx-0" @click="toBeDeleted = [content.id]">
                             <fa :icon="['far', 'trash-alt']" fixed-width size="lg" />
                         </b-button>
                         <b-button :to="`/contents/${content.id}/edit`" variant="link text-primary" class="pl-1 pr-0 mx-0">
@@ -72,6 +72,13 @@
                 <b-col cols="1">{{ content.updated_at | formatDate }}</b-col>
             </b-row>
         </div>
+
+        <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent" @cancel="toBeDeleted = []">
+            <p><strong>This action is permanent</strong>.</p>
+            <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
+            <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
+            <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
+        </b-modal>
     </div>
 </template>
 
@@ -120,8 +127,9 @@ export default {
             contents: [],
             filters: {
                 title: '',
-                content_type: null
-            }
+                content_type: null,
+            },
+            toBeDeleted: [],
         };
     },
     computed: {
@@ -171,5 +179,28 @@ export default {
                 });
         });
     },
+    methods: {
+        deleteContent() {
+            const deleteRequests = this.toBeDeleted.map(e => this.$axios.delete(`/contents/${e}`));
+
+            Promise.all(deleteRequests)
+                .then(responses => {
+                    this.$root.$emit("global-notification", {
+                        type: "success",
+                        message: "Content deleted succesfully."
+                    });
+                    console.log(responses);
+                    // TODO Finish up updating list
+                })
+                .catch(errors => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `Something went wrong while deleting content.<br/>${errors}`
+                    });
+                });
+
+            this.toBeDeleted = [];
+        }
+    }
 };
 </script>
