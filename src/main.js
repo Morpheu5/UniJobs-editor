@@ -6,7 +6,10 @@ import axios from "axios";
 import _startCase from 'lodash/startCase';
 import _cloneDeep from 'lodash/cloneDeep';
 
-import BootstrapVue from "bootstrap-vue";
+import {
+    Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+} from 'bootstrap-vue/es/components';
+
 import "bootstrap/scss/bootstrap.scss";
 import "bootstrap-vue/dist/bootstrap-vue.min.css";
 
@@ -62,7 +65,12 @@ library.add(
 
 Vue.config.productionTip = false;
 
-Vue.use(BootstrapVue);
+const bootstrapComponents = [
+    Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+];
+for (const component of bootstrapComponents) {
+    Vue.use(component);
+}
 Vue.use(VueRouter);
 Vue.use(flatPickr);
 

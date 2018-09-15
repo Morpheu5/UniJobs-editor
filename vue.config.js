@@ -1,3 +1,10 @@
+const WebpackDeepScopeAnalysisPlugin = require('webpack-deep-scope-plugin').default;
+
 module.exports = {
-  productionSourceMap: false
+  productionSourceMap: false,
+  configureWebpack: {
+    plugins: [
+      new WebpackDeepScopeAnalysisPlugin()
+    ]
+  }
 }
