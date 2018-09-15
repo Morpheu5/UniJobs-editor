@@ -2,27 +2,26 @@
     <div id="content_editor">
         <b-row v-if="content">
             <b-col>
-                <b-row class="mt-3">
+                <b-row>
                     <b-col>
-                        <h3>Title</h3>
-                        <b-card :class="content.title.validity" no-body class="field_container">
-                            <b-tabs card>
-                                <b-tab v-for="l in availableLocales()" :key="`title-${l.code}`">
-                                    <template slot="title">
-                                        {{ l.name }} <span v-show="!content.title.value[l.code] || content.title.value[l.code] == ''" class="missing">*</span>
-                                    </template>
-                                    <b-form-group>
-                                        <b-form-input
-                                            v-model="content.title.value[l.code]"
-                                            type="text"
-                                            placeholder="Enter a title"
-                                            required
-                                        />
-                                    </b-form-group>
-                                </b-tab>
-                            </b-tabs>
+                        <b-card :class="content.title.validity" class="field_container">
+                            <template slot="header">
+                                <h5>Summary title</h5>
+                                <p class="m-0">A title or a brief description of the content.</p>
+                            </template>
+                            <b-input-group v-for="l in availableLocales()" :key="`title-${l.code}`" class="mb-3">
+                                <b-input-group-text slot="prepend" class="text-monospace">
+                                    <small>{{ l.code }}</small>
+                                </b-input-group-text>
+                                <b-input
+                                    v-model="content.title.value[l.code]"
+                                    type="text"
+                                    placeholder="Enter a title"
+                                    required
+                                />
+                            </b-input-group>
 
-                            <ul v-show="content.title.invalidFeedback" class="invalid_feedback">
+                            <ul v-show="content.title.invalidFeedback" class="invalid_feedback mb-0">
                                 <li v-for="(v,k) in content.title.invalidFeedback" :key="k">{{ v }}</li>
                             </ul>
                         </b-card>

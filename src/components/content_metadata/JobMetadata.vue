@@ -6,31 +6,34 @@
             <template slot="header">
                 <h6 class="m-0">Job title</h6>
             </template>
-            <b-tabs card>
-                <b-tab v-for="l in availableLocales()" :key="l.name">
-                    <template slot="title">
-                        {{ l.name }} <span v-show="!metadata.job_title.value[l.code] || metadata.job_title.value[l.code].content == ''" class="missing">*</span>
-                    </template>
-                    <b-form-input v-model="metadata.job_title.value[l.code].content" required></b-form-input>
-                </b-tab>
-            </b-tabs>
 
-            <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback">
-                <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k">{{ v }}</li>
-            </ul>
+            <div class="px-3 pb-3">
+                <b-input-group v-for="l in availableLocales()" :key="l.name" class="mt-3">
+                    <b-input-group-text slot="prepend" class="text-monospace">
+                        <small>{{ l.code }}</small>
+                    </b-input-group-text>
+
+                    <b-input v-model="metadata.job_title.value[l.code].content" required></b-input>
+                </b-input-group>
+
+                <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
+                    <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k">{{ v }}</li>
+                </ul>
+            </div>
         </b-card>
 
         <b-card :class="[metadata.salary.validity, metadata.tax_status.validity].includes('invalid') ? 'invalid' : null" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">Salary (&euro;)</h6>
             </template>
+
             <b-form-input v-model="metadata.salary.value" placeholder="e.g., 20000, 24000-30000…" required></b-form-input>
             <b-radio-group id="tax_status" v-model="metadata.tax_status.value" class="mt-3" required>
                 <b-radio value="gross" name="tax_status">Gross</b-radio>
                 <b-radio value="tax-exempt" name="tax_status">Tax exempt</b-radio>
             </b-radio-group>
 
-            <ul v-show="[...metadata.salary.invalidFeedback, ...metadata.tax_status.validity].length > 0" class="invalid_feedback mt-3">
+            <ul v-show="[...metadata.salary.invalidFeedback, ...metadata.tax_status.validity].length > 0" class="invalid_feedback mt-3 mb-0">
                 <li v-for="(v, k) in [...metadata.salary.invalidFeedback, ...metadata.tax_status.invalidFeedback]" :key="k">{{ v }}</li>
             </ul>
         </b-card>
@@ -92,18 +95,20 @@
             <template slot="header">
                 <h6 class="m-0">Application URL</h6>
             </template>
-            <b-tabs card>
-                <b-tab v-for="l in availableLocales()" :key="l.name">
-                    <template slot="title">
-                        {{ l.name }} <span v-show="!metadata.url.value[l.code] || metadata.url.value[l.code].content == ''" class="missing">*</span>
-                    </template>
-                    <b-form-input v-model="metadata.url.value[l.code].content" required></b-form-input>
-                </b-tab>
-            </b-tabs>
 
-            <ul v-show="metadata.url.invalidFeedback.length > 0" class="invalid_feedback">
-                <li v-for="(v, k) in metadata.url.invalidFeedback" :key="k">{{ v }}</li>
-            </ul>
+            <div class="px-3 pb-3">
+                <b-input-group v-for="l in availableLocales()" :key="l.name" class="mt-3">
+                    <b-input-group-text slot="prepend" class="text-monospace">
+                        <small>{{ l.code }}</small>
+                    </b-input-group-text>
+
+                    <b-input v-model="metadata.url.value[l.code].content" required></b-input>
+                </b-input-group>
+
+                <ul v-show="metadata.url.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
+                    <li v-for="(v, k) in metadata.url.invalidFeedback" :key="k">{{ v }}</li>
+                </ul>
+            </div>
         </b-card>
     </div>
 </template>
