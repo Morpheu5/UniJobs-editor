@@ -76,6 +76,21 @@ class PageMetadataData {
             slug: this.slug.value,
         };
     }
+
+    validate() {
+        let valid = true;
+
+        if (this.slug.value === '') {
+            this.slug.validity = 'invalid';
+            this.slug.invalidFeedback = ['Required field'];
+            valid = false;
+        } else {
+            this.slug.validity = 'valid';
+            this.slug.invalidFeedback = [];
+        }
+
+        return valid;
+    }
 };
 
 export default {
@@ -168,18 +183,7 @@ export default {
         },
 
         validate() {
-            let valid = true;
-
-            if (this.metadata.slug.value === '') {
-                this.metadata.slug.validity = 'invalid';
-                this.metadata.slug.invalidFeedback = ['Required field'];
-                valid = false;
-            } else {
-                this.metadata.slug.validity = 'valid';
-                this.metadata.slug.invalidFeedback = [];
-            }
-
-            return valid;
+            return this.metadata.validate();
         }
     }
 };

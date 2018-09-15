@@ -143,6 +143,48 @@ class JobMetadataData {
             url: this.url.value,
         };
     }
+
+    validate() {
+        let valid = true;
+
+        if (Object.entries(this.job_title.value).some(e => e[1].content === '')) {
+            this.job_title.validity = 'invalid';
+            this.job_title.invalidFeedback = ['Missing translations'];
+            valid = false;
+        } else {
+            this.job_title.validity = 'valid';
+            this.job_title.invalidFeedback = [];
+        }
+
+        if (this.salary.value !== '' && this.tax_status.value === null) {
+            this.tax_status.validity = 'invalid';
+            this.tax_status.invalidFeedback = ['If you specify a salary, you must specify a tax status as well'];
+            valid = false;
+        } else {
+            this.tax_status.validity = 'valid';
+            this.tax_status.invalidFeedback = [];
+        }
+
+        if (this.deadline.value === '') {
+            this.deadline.validity = 'invalid';
+            this.deadline.invalidFeedback = ['Required field'];
+            valid = false;
+        } else {
+            this.deadline.validity = 'valid';
+            this.deadline.invalidFeedback = [];
+        }
+
+        if (Object.entries(this.url.value).some(e => e[1].content === '')) {
+            this.url.validity = 'invalid';
+            this.url.invalidFeedback = ['Missing URLs'];
+            valid = false;
+        } else {
+            this.url.validity = 'valid';
+            this.url.invalidFeedback = [];
+        }
+
+        return valid;
+    }
 };
 
 export default {
@@ -246,45 +288,7 @@ export default {
         },
         
         validate() {
-            let valid = true;
-
-            if (Object.entries(this.metadata.job_title.value).some(e => e[1].content === '')) {
-                this.metadata.job_title.validity = 'invalid';
-                this.metadata.job_title.invalidFeedback = ['Missing translations'];
-                valid = false;
-            } else {
-                this.metadata.job_title.validity = 'valid';
-                this.metadata.job_title.invalidFeedback = [];
-            }
-
-            if (this.metadata.salary.value !== '' && this.metadata.tax_status.value === null) {
-                this.metadata.tax_status.validity = 'invalid';
-                this.metadata.tax_status.invalidFeedback = ['If you specify a salary, you must specify a tax status as well'];
-                valid = false;
-            } else {
-                this.metadata.tax_status.validity = 'valid';
-                this.metadata.tax_status.invalidFeedback = [];
-            }
-
-            if (this.metadata.deadline.value === '') {
-                this.metadata.deadline.validity = 'invalid';
-                this.metadata.deadline.invalidFeedback = ['Required field'];
-                valid = false;
-            } else {
-                this.metadata.deadline.validity = 'valid';
-                this.metadata.deadline.invalidFeedback = [];
-            }
-
-            if (Object.entries(this.metadata.url.value).some(e => e[1].content === '')) {
-                this.metadata.url.validity = 'invalid';
-                this.metadata.url.invalidFeedback = ['Missing URLs'];
-                valid = false;
-            } else {
-                this.metadata.url.validity = 'valid';
-                this.metadata.url.invalidFeedback = [];
-            }
-
-            return valid;
+            return this.metadata.validate();
         }
     }
 };

@@ -152,6 +152,30 @@ class Content {
             content_blocks: this.content_blocks,
         };
     }
+
+    validate() {
+        let valid = true;
+
+        if (Object.entries(this.title.value).some(e => e[1] === '')) {
+            this.title.validity = 'invalid';
+            this.title.invalidFeedback = ['Missing translations'];
+            valid = false;
+        } else {
+            this.title.validity = 'valid';
+            this.title.invalidFeedback = [];
+        }
+
+        if (!this.organization.value.id) {
+            this.organization.validity = 'invalid';
+            this.organization.invalidFeedback = ['Required field.'];
+            valid = false;
+        } else {
+            this.organization.validity = 'valid';
+            this.organization.invalidFeedback = [];
+        }
+
+        return valid;
+    }
 };
 
 export default {
@@ -254,30 +278,10 @@ export default {
         },
 
         validate() {
-            let valid = true;
-
-            if (Object.entries(this.content.title.value).some(e => e[1] === '')) {
-                this.content.title.validity = 'invalid';
-                this.content.title.invalidFeedback = ['Missing translations'];
-                valid = false;
-            } else {
-                this.content.title.validity = 'valid';
-                this.content.title.invalidFeedback = [];
-            }
-
-            if (!this.content.organization.value.id) {
-                this.content.organization.validity = 'invalid';
-                this.content.organization.invalidFeedback = ['Required field.'];
-                valid = false;
-            } else {
-                this.content.organization.validity = 'valid';
-                this.content.organization.invalidFeedback = [];
-            }
-
             const validatable = this.$children.filter(e => e.$el.classList.contains('validatable'));
-            const a = validatable.map(e => e.validate()).reduce((a, e) => a && e);
+            const childrenValidity = validatable.map(e => e.validate()).reduce((a, e) => a && e);
 
-            return valid && a;
+            return this.content.validate() && childrenValidity;
         },
 
         saveContent(event) {
@@ -322,8 +326,8 @@ export default {
                         this.fetchContent()
                             .then(contentArgs => {
                                 if (null !== contentArgs) {
-                                    this.content = new Content(contentArgs);
-                                    this.referenceDocument = new Content(contentArgs);
+                                    this.content = new Content(_cloneDeep(contentArgs));
+                                    this.referenceDocument = new Content(_cloneDeep(contentArgs));
                                 }
                             });
                         this.$root.$emit("global-notification", {
