@@ -42,9 +42,7 @@
                         </b-col>
                     </b-row>
                     <b-row class="mt-2">
-
                         <component v-model="content.content_blocks[i]" :contentId="id" :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" class="validatable" />
-
                     </b-row>
                 </div>
 
@@ -69,7 +67,7 @@
                         <h6 class="m-0">Meta</h6>
                     </template>
 
-                    <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" />
+                    <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" @updateOrganization="updateOrganization" />
                 </b-card>
             </b-col>
         </b-row>
