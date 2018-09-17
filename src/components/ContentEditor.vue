@@ -6,8 +6,8 @@
                     <b-col>
                         <b-card :class="content.title.validity" class="field_container">
                             <template slot="header">
-                                <h5>Summary title</h5>
-                                <p class="m-0">A title or a brief description of the content.</p>
+                                <h5>{{ $t('content_editor.summary_title') }}</h5>
+                                <p class="m-0">{{ $t('content_editor.summary_title_description') }}</p>
                             </template>
                             <b-input-group v-for="l in availableLocales()" :key="`title-${l.code}`" class="mb-3">
                                 <b-input-group-text slot="prepend" class="text-monospace">
@@ -15,8 +15,8 @@
                                 </b-input-group-text>
                                 <b-input
                                     v-model="content.title.value[l.code]"
+                                    :placeholder="$t('content_editor.summary_title_placeholder', l.iso)"
                                     type="text"
-                                    placeholder="Enter a title"
                                     required
                                 />
                             </b-input-group>
@@ -32,10 +32,10 @@
                     <b-row>
                         <b-col>
                             <div class="float-left">
-                                <h4>block type: {{ block.block_type }}</h4>
+                                <h4>{{ $t(`block_types.${block.block_type}`) }}</h4>
                             </div>
                             <div class="float-right">
-                                <span v-show="block.delete" class="text-danger">This block will be deleted when you save the document. </span>
+                                <span v-show="block.delete" class="text-danger">{{ $t('content_editor.delete_block_warning') }} </span>
                                 <b-button v-show="block.delete" variant="success" size="sm" @click="block.delete = false"><fa :icon="['fas', 'undo']" fixed-width /></b-button>
                                 <b-button v-show="!block.delete" variant="danger" size="sm" @click="block.delete = true"><fa :icon="['far', 'trash-alt']" fixed-width /></b-button>
                             </div>
@@ -50,11 +50,19 @@
                     <b-row>
                         <b-col>
                             <p class="text-center">
-                                <b-dropdown text="Add a block of type " size="sm" class="ml-2" variant="success">
+                                <b-button size="sm" variant="success" @click="addContentBlock('text')">
+                                    <fa :icon="['fas', 'plus']" class="mr-2" /> {{ $t('content_editor.add_block_of_text') }}
+                                </b-button>
+                                <!--
+                                <b-dropdown :text="$t('content_editor.add_block_of_type')" size="sm" class="ml-2" variant="success">
+                                    <template slot="text">
+                                        <fa :icon="['fas', 'plus']" class="mr-2" /> {{ $t('content_editor.add_block_of_type') }}
+                                    </template>
                                     <b-dropdown-item v-for="t in ['text']" :key="t" @click="addContentBlock(t)">
-                                        {{ t[0].toUpperCase() + t.slice(1) }}
+                                        {{ $t(`block_types.${t}`) }}
                                     </b-dropdown-item>
                                 </b-dropdown>
+                                -->
                             </p>
                         </b-col>
                     </b-row>
@@ -64,7 +72,7 @@
             <b-col class="sidebar" cols="4">
                 <b-card>
                     <template slot="header">
-                        <h6 class="m-0">Meta</h6>
+                        <h6 class="m-0">{{ $t('content_editor.meta') }}</h6>
                     </template>
 
                     <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" @updateOrganization="updateOrganization" />
@@ -75,16 +83,13 @@
             <b-col>
                 <b-card class="mt-5">
                     <div class="float-right">
-                        <b-button v-b-modal.deleteContentModal class="mr-3" variant="outline-danger">Delete</b-button>
-                        <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveContent">Save</b-button>
+                        <b-button v-b-modal.deleteContentModal class="mr-3" variant="outline-danger">{{ $t('delete') }}</b-button>
+                        <b-button :disabled="!documentDirty" class="mr-0" variant="success" @click="saveContent">{{ $t('save') }}</b-button>
                     </div>
                 </b-card>
 
-                <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent">
-                    <p><strong>This action is permanent</strong>.</p>
-                    <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
-                    <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
-                    <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
+                <b-modal id="deleteContentModal" :title="$t('content_editor.delete_modal_title')" :ok-title="$t('yes')" :cancel-title="$t('no')" ok-variant="danger" header-text-variant="danger" @ok="deleteContent">
+                    <div v-html="$t('content_editor.delete_modal')" />
                 </b-modal>
             </b-col>
         </b-row>
@@ -267,7 +272,7 @@ export default {
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `Could not retrieve content.<br/>${error}`
+                        message: `${$t('content_editor.retrieve_content_fail')}<br/>${error}`
                     });
                     return null;
                 });
@@ -310,7 +315,7 @@ export default {
                         // Error creating the content
                         this.$root.$emit("global-notification", {
                             type: "danger",
-                            message: `Something went wrong while saving this content.<br/>${error}`
+                            message: `${$t('content_editor.save_content_fail')}<br/>${error}`
                         });
                     });
             } else if (this.content.document.id) {
@@ -328,13 +333,13 @@ export default {
                             });
                         this.$root.$emit("global-notification", {
                             type: "success",
-                            message: "Content saved correctly."
+                            message: $t('content_editor.save_content_success')
                         });
                     }).catch(error => {
                         // Error editing the content
                         this.$root.$emit("global-notification", {
                             type: "danger",
-                            message: `Something went wrong while saving this content.<br/>${error}`
+                            message: `${$t('content_editor.save_content_fail')}.<br/>${error}`
                         });
                     });
             } else {
@@ -348,13 +353,13 @@ export default {
                 this.$router.push({ path: '/contents', });
                     this.$root.$emit("global-notification", {
                         type: "success",
-                        message: "Content deleted succesfully."
+                        message: $t('content_editor.delete_content_success')
                     });
                 })
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `Something went wrong while deleting this content.<br/>${error}`
+                        message: `${$t('content_editor.delete_content_fail')}<br/>${error}`
                     });
                 });
         },

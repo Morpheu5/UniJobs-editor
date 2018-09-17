@@ -8,10 +8,10 @@
             <b-input-group-text slot="append" :class="organizationSearchQuery ? 'bg-primary border-primary' : ''" @click="organizationSearchQuery = ''">
                 <fa :icon="['fas', organizationSearchQuery ? 'times' : 'search']" :class="organizationSearchQuery ? 'text-white' : ''" />
             </b-input-group-text>
-            <b-input v-model="organizationSearchQuery" placeholder="Type to search…"></b-input>
+            <b-input v-model="organizationSearchQuery" :placeholder="$t('content_meta.type_to_search')"></b-input>
         </b-input-group>
         <div class="mt-3">
-            <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">Searching…</p>
+            <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">{{ $t('content_meta.searching') }}</p>
             <b-list-group v-if="organizationSearchResults.length">
                 <b-list-group-item
                     v-for="org in flattenForest(organizationSearchResults)"
@@ -23,7 +23,7 @@
                 </b-list-group-item>
             </b-list-group>
             <div v-else-if="organizationSearchQuery && !organizationSearchQueryDirty">
-                No organizations found.
+                {{ $t('content_meta.no_organizations_found') }}
             </div>
         </div>
     </div>

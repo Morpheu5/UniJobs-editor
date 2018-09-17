@@ -1,10 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import VueI18n from "vue-i18n";
+import en_UK from "@/langs/en-UK.js";
+import it_IT from "@/langs/it-IT.js";
 
 import axios from "axios";
 
 import _startCase from 'lodash/startCase';
 import _cloneDeep from 'lodash/cloneDeep';
+import _capitalize from 'lodash/capitalize';
 
 import {
     Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
@@ -72,6 +76,7 @@ for (const component of bootstrapComponents) {
     Vue.use(component);
 }
 Vue.use(VueRouter);
+Vue.use(VueI18n);
 Vue.use(flatPickr);
 
 // A bit annoying but hey...
@@ -97,6 +102,10 @@ Vue.prototype.$axios = axiosObject;
 Vue.filter('titleCase', function(value) {
     if (!value) return '';
     return _startCase(value);
+});
+Vue.filter('capitalize', function(value) {
+    if (!value) return '';
+    return _capitalize(value);
 });
 
 const routes = [
@@ -138,7 +147,7 @@ router.beforeEach((to, from, next) => {
 Vue.mixin({
     methods: {
         availableLocales() {
-            return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-UK", name: "English" } ];
+            return [ { code: "it", iso: "it_IT", name: "Italiano" }, { code: "en", iso: "en_UK", name: "English" } ];
         },
         spreadOverLocales(o) {
             return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _cloneDeep(o)}), {});
@@ -146,9 +155,18 @@ Vue.mixin({
     }
 });
 
+const i18n = new VueI18n({
+    locale: 'it_IT',
+    messages: {
+        en_UK,
+        it_IT,
+    }
+});
+
 // eslint-disable-next-line
 const vm = new Vue({
     store,
     router,
+    i18n,
     render: h => h(App)
 }).$mount("#app");

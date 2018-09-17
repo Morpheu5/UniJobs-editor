@@ -7,7 +7,7 @@
                 show
                 dismissible
                 @dismissed="removeNotification(n)"
-            > <div                v-html="n.message" /> </b-alert>
+            > <div v-html="n.message" /> </b-alert>
         </b-col>
     </b-row>
 </template>

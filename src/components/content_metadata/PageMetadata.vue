@@ -1,10 +1,10 @@
 <template>
     <div>
-        <b-form-checkbox id="published" v-model="metadata.published.value">Published</b-form-checkbox>
+        <b-form-checkbox id="published" v-model="metadata.published.value">{{ $t('content_meta.published') }}</b-form-checkbox>
 
         <b-card :class="metadata.slug.validity" class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">URL Slug</h6>
+                <h6 class="m-0">{{ $t('content_meta.url_slug') }}</h6>
             </template>
 
             <b-form-group>
@@ -20,7 +20,7 @@
 
         <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">Organization</h6>
+                <h6 class="m-0">{{ $t('content_meta.organization') }}</h6>
             </template>
 
             <OrganizationsPicker v-model="thisOrganization" />

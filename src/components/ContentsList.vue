@@ -2,19 +2,19 @@
     <div id="content_list_page">
         <b-row>
             <b-col cols="8">
-                <h2 class="mb-3">Your contents</h2>
+                <h2 class="mb-3">{{ $t('sidebar_menu.contents') }}</h2>
             </b-col>
             <b-col cols="2">
                 <div class="float-right">
                     <b-button v-if="contentTypesForCreation.length === 1" variant="success">
-                        <fa :icon="['fas', 'plus']" class="mr-2" /> Create new {{ contentTypesForCreation[0].name }}
+                        <fa :icon="['fas', 'plus']" class="mr-2" /> {{ $t('contents_list.create_new') }} {{ $t(`content_type.${contentTypesForCreation[0]}`) }}
                     </b-button>
                     <b-dropdown v-else text="Create new " variant="success">
                         <template slot="text">
-                            <fa :icon="['fas', 'plus']" class="mr-2" /> Create new…
+                            <fa :icon="['fas', 'plus']" class="mr-2" /> {{ $t('contents_list.create_new') }}
                         </template>
                         <b-dropdown-item v-for="contentType in contentTypesForCreation" :key="contentType.id" :to="`/contents/${contentType.id}/new`">
-                            {{ contentType.name }}
+                            {{ $t(`content_types.${contentType.id}`) | capitalize }}
                         </b-dropdown-item>
                     </b-dropdown>
                 </div>
@@ -28,7 +28,7 @@
                         <b-input-group-text slot="prepend" :class="filters.title ? 'bg-primary border-primary' : ''" @click="filters.title = ''">
                             <fa :icon="['fas', filters.title ? 'times' : 'search']" :class="filters.title ? 'text-white' : ''" />
                         </b-input-group-text>
-                        <b-input v-model="filters.title" type="text" size="sm" placeholder="Title"></b-input>
+                        <b-input v-model="filters.title" :placeholder="$t('contents_list.title')" type="text" size="sm"></b-input>
                     </b-input-group>
                 </b-col>
                 <b-col cols="2" class="text-center px-3">
@@ -40,10 +40,10 @@
                     </b-input-group>
                 </b-col>
                 <b-col cols="1">
-                    Published
+                    {{ $t('content_meta.published') }}
                 </b-col>
-                <b-col cols="1">Created</b-col>
-                <b-col cols="1">Updated</b-col>
+                <b-col cols="1">{{ $t('contents_list.created') }}</b-col>
+                <b-col cols="1">{{ $t('contents_list.updated') }}</b-col>
             </b-row>
             <b-row v-for="(content, index) in filteredContents" :key="content.uuid" :class="{ even: (index%2), odd: !(index%2), first: !index, last: index == contents.length-1 }" class="py-2 content no-gutters" >
                 <b-col cols="1">
@@ -60,7 +60,7 @@
                     <div v-for="(v, k) in content.title" :key="`${content.uuid}-${k}`"><span class="lang">{{k}}</span>{{ v }}</div>
                 </b-col>
                 <b-col cols="2" class="text-center">
-                    <div class="mt-3">{{ content.content_type | titleCase }}</div>
+                    <div class="mt-3">{{ $t(`content_types.${content.content_type}`) | capitalize }}</div>
                 </b-col>
                 <b-col cols="1">
                     <div class="mt-3 text-center">
@@ -73,11 +73,8 @@
             </b-row>
         </div>
 
-        <b-modal id="deleteContentModal" title="Delete this content?" ok-variant="danger" ok-title="Yes" header-text-variant="danger" @ok="deleteContent" @cancel="toBeDeleted = []">
-            <p><strong>This action is permanent</strong>.</p>
-            <p>If you confirm, you <strong>will not</strong> be able to recover the content.</p>
-            <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
-            <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
+        <b-modal id="deleteContentModal" :title="$t('content_editor.delete_modal_title')" :ok-title="$t('yes')" :cancel-title="$t('no')" ok-variant="danger" header-text-variant="danger" @ok="deleteContent" @cancel="toBeDeleted = []">
+            <div v-html="$t('content_editor.delete_modal')" />
         </b-modal>
     </div>
 </template>
@@ -145,8 +142,9 @@ export default {
             return filteredContents;
         },
         contentTypes() {
-            let options = [{ value: null, text: "Content Type"}];
-            let otherOptions = _uniq(this.contents.map(c => c.content_type)).map(t => ({ value: t, text: _capitalize(t)}));
+            let options = [{ value: null, text: this.$t('contents_list.content_type')}];
+            let otherOptions = _uniq(this.contents.map(c => c.content_type))
+                                .map(t => ({ value: t, text: _capitalize(this.$t(`content_types.${t}`))}));
             return [...options, ...otherOptions];
         },
         contentTypesForCreation() {
@@ -154,12 +152,8 @@ export default {
                 return [];
             }
             const types = [
-                { name: 'Job offer', id: 'job',
-                  roles: ['ADMIN', 'CONTENT_EDITOR', 'JOB_EDITOR']
-                },
-                { name: 'Page', id: 'page',
-                  roles: ['ADMIN', 'CONTENT_EDITOR']
-                }
+                { id: 'job', roles: ['ADMIN', 'CONTENT_EDITOR', 'JOB_EDITOR'] },
+                { id: 'page', roles: ['ADMIN', 'CONTENT_EDITOR'] },
             ];
             const userRole = this.$store.state.user.role;
             return types.filter(type => type.roles.includes(userRole));
@@ -175,7 +169,7 @@ export default {
                 this.contents = [];
                 this.$root.$emit("global-notification", {
                     type: "danger",
-                    message: `There was a problem retrieving the list of contents.<br/>${error}`
+                    message: `${$t('contents_list.retrieve_list_failed')}<br/>${error}`
                 });
         });
     },
@@ -187,7 +181,7 @@ export default {
                 .then(responses => {
                     this.$root.$emit("global-notification", {
                         type: "success",
-                        message: "Content deleted succesfully."
+                        message: $t('content_editor.delete_content_success')
                     });
                     console.log(responses);
                     // TODO Finish up updating list
@@ -195,7 +189,7 @@ export default {
                 .catch(errors => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `Something went wrong while deleting content.<br/>${errors}`
+                        message: `${$t('content_editor.delete_content_fail')}<br/>${errors}`
                     });
                 });
 

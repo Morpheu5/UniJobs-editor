@@ -1,10 +1,10 @@
 <template>
     <div>
-        <b-form-checkbox id="published" v-model="metadata.published.value">Published</b-form-checkbox>
+        <b-form-checkbox id="published" v-model="metadata.published.value">{{ $t('content_meta.published') }}</b-form-checkbox>
 
         <b-card :class="metadata.job_title.validity" no-body class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">Job title</h6>
+                <h6 class="m-0">{{ $t('content_meta.job_title') }}</h6>
             </template>
 
             <div class="px-3 pb-3">
@@ -13,7 +13,7 @@
                         <small>{{ l.code }}</small>
                     </b-input-group-text>
 
-                    <b-input v-model="metadata.job_title.value[l.code].content" required></b-input>
+                    <b-input v-model="metadata.job_title.value[l.code].content" :placeholder="$t('content_meta.job_title_placeholder', l.iso)" required></b-input>
                 </b-input-group>
 
                 <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
@@ -24,13 +24,13 @@
 
         <b-card :class="[metadata.salary.validity, metadata.tax_status.validity].includes('invalid') ? 'invalid' : null" class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">Salary (&euro;)</h6>
+                <h6 class="m-0">{{ $t('content_meta.salary') }} (&euro;)</h6>
             </template>
 
-            <b-form-input v-model="metadata.salary.value" placeholder="e.g., 20000, 24000-30000…" required></b-form-input>
+            <b-form-input v-model="metadata.salary.value" :placeholder="$t('content_meta.salary_placeholder')" required></b-form-input>
             <b-radio-group id="tax_status" v-model="metadata.tax_status.value" class="mt-3" required>
-                <b-radio value="gross" name="tax_status">Gross</b-radio>
-                <b-radio value="tax-exempt" name="tax_status">Tax exempt</b-radio>
+                <b-radio value="gross" name="tax_status">{{ $t('content_meta.salary_gross') }}</b-radio>
+                <b-radio value="tax-exempt" name="tax_status">{{ $t('content_meta.salary_tax_exempt') }}</b-radio>
             </b-radio-group>
 
             <ul v-show="[...metadata.salary.invalidFeedback, ...metadata.tax_status.validity].length > 0" class="invalid_feedback mt-3 mb-0">
@@ -40,7 +40,7 @@
 
         <b-card :class="organization.validity" class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">Organization</h6>
+                <h6 class="m-0">{{ $t('content_meta.organization') }}</h6>
             </template>
 
             <OrganizationsPicker v-model="thisOrganization" />
@@ -52,7 +52,7 @@
 
         <b-card :class="metadata.deadline.validity" class="mt-3">
             <template slot="header">
-                <h6 class="m-0">Application Deadline</h6>
+                <h6 class="m-0">{{ $t('content_meta.application_deadline') }}</h6>
             </template>
 
             <b-input-group>
@@ -69,7 +69,7 @@
 
         <b-card :class="metadata.url.validity" no-body class="mt-3 field_container">
             <template slot="header">
-                <h6 class="m-0">Application URL</h6>
+                <h6 class="m-0">{{ $t('content_meta.application_url') }}</h6>
             </template>
 
             <div class="px-3 pb-3">
@@ -78,7 +78,7 @@
                         <small>{{ l.code }}</small>
                     </b-input-group-text>
 
-                    <b-input v-model="metadata.url.value[l.code].content" required></b-input>
+                    <b-input v-model="metadata.url.value[l.code].content" :placeholder="$t('content_meta.application_url_placeholder', l.iso)" required></b-input>
                 </b-input-group>
 
                 <ul v-show="metadata.url.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">

@@ -11,14 +11,14 @@
             <b-row class="py-5">
                 <b-col cols="4" offset="4">
                     <b-card>
-                        <h2 slot="header" class="text-center">Login</h2>
+                        <h2 slot="header" class="text-center">{{ $t('login') }}</h2>
                         <b-input-group>
                             <b-input id="login-email"
                                      v-model="email"
+                                     :placeholder="$t('login.email_address')"
                                      name="username"
                                      type="email"
                                      class="my-3"
-                                     placeholder="E-mail address"
                                      required
                                      autocomplete="username"
                             />
@@ -27,9 +27,9 @@
                             <b-input id="login-password"
                                      v-model="password"
                                      :type="showPassword ? 'text' : 'password'"
+                                     :placeholder="$t('login.password')"
                                      name="password"
                                      class=""
-                                     placeholder="Password"
                                      required
                                      autocomplete="current-password"
                                      @keyup.native.enter="doTheLogin"
@@ -42,7 +42,7 @@
                                   class="float-right mt-3"
                                   variant="primary"
                                   @click="doTheLogin"
-                        >Login</b-button>
+                        >{{ $t('login') }}</b-button>
                     </b-card>
                 </b-col>
             </b-row>
