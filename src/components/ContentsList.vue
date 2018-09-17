@@ -169,7 +169,7 @@ export default {
                 this.contents = [];
                 this.$root.$emit("global-notification", {
                     type: "danger",
-                    message: `${$t('contents_list.retrieve_list_failed')}<br/>${error}`
+                    message: `${this.$t('contents_list.retrieve_list_failed')}<br/>${error}`
                 });
         });
     },
@@ -181,7 +181,7 @@ export default {
                 .then(responses => {
                     this.$root.$emit("global-notification", {
                         type: "success",
-                        message: $t('content_editor.delete_content_success')
+                        message: this.$t('content_editor.delete_content_success')
                     });
                     console.log(responses);
                     // TODO Finish up updating list
@@ -189,7 +189,7 @@ export default {
                 .catch(errors => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `${$t('content_editor.delete_content_fail')}<br/>${errors}`
+                        message: `${this.$t('content_editor.delete_content_fail')}<br/>${errors}`
                     });
                 });
 

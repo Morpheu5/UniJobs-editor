@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import VueI18n from "vue-i18n";
-import en_UK from "@/langs/en-UK.js";
+import en_GB from "@/langs/en-GB.js";
 import it_IT from "@/langs/it-IT.js";
 
 import axios from "axios";
@@ -11,7 +11,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _capitalize from 'lodash/capitalize';
 
 import {
-    Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
 } from 'bootstrap-vue/es/components';
 
 import "bootstrap/scss/bootstrap.scss";
@@ -70,7 +70,7 @@ library.add(
 Vue.config.productionTip = false;
 
 const bootstrapComponents = [
-    Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
 ];
 for (const component of bootstrapComponents) {
     Vue.use(component);
@@ -147,7 +147,7 @@ router.beforeEach((to, from, next) => {
 Vue.mixin({
     methods: {
         availableLocales() {
-            return [ { code: "it", iso: "it_IT", name: "Italiano" }, { code: "en", iso: "en_UK", name: "English" } ];
+            return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-GB", name: "English" } ];
         },
         spreadOverLocales(o) {
             return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _cloneDeep(o)}), {});
@@ -156,10 +156,10 @@ Vue.mixin({
 });
 
 const i18n = new VueI18n({
-    locale: 'it_IT',
+    locale: 'it-IT',
     messages: {
-        en_UK,
-        it_IT,
+        'en-GB': en_GB,
+        'it-IT': it_IT,
     }
 });
 

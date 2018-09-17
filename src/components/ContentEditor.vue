@@ -272,7 +272,7 @@ export default {
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `${$t('content_editor.retrieve_content_fail')}<br/>${error}`
+                        message: `${this.$t('content_editor.retrieve_content_fail')}<br/>${error}`
                     });
                     return null;
                 });
@@ -315,7 +315,7 @@ export default {
                         // Error creating the content
                         this.$root.$emit("global-notification", {
                             type: "danger",
-                            message: `${$t('content_editor.save_content_fail')}<br/>${error}`
+                            message: `${this.$t('content_editor.save_content_fail')}<br/>${error}`
                         });
                     });
             } else if (this.content.document.id) {
@@ -333,13 +333,13 @@ export default {
                             });
                         this.$root.$emit("global-notification", {
                             type: "success",
-                            message: $t('content_editor.save_content_success')
+                            message: this.$t('content_editor.save_content_success')
                         });
                     }).catch(error => {
                         // Error editing the content
                         this.$root.$emit("global-notification", {
                             type: "danger",
-                            message: `${$t('content_editor.save_content_fail')}.<br/>${error}`
+                            message: `${this.$t('content_editor.save_content_fail')}.<br/>${error}`
                         });
                     });
             } else {
@@ -353,13 +353,13 @@ export default {
                 this.$router.push({ path: '/contents', });
                     this.$root.$emit("global-notification", {
                         type: "success",
-                        message: $t('content_editor.delete_content_success')
+                        message: this.$t('content_editor.delete_content_success')
                     });
                 })
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
-                        message: `${$t('content_editor.delete_content_fail')}<br/>${error}`
+                        message: `${this.$t('content_editor.delete_content_fail')}<br/>${error}`
                     });
                 });
         },

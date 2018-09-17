@@ -2,13 +2,18 @@
     <div id="main_container">
         <b-container fluid class="bg-primary text-light sticky-top">
             <b-row class="py-2">
-                <b-col>
+                <b-col cols="8">
                     <h1 class="d-inline">UniJobs.it Content Editor</h1>
                     <b-badge v-show="unsavedChanges" class="ml-4" variant="light text-danger">{{ $t('main_container.unsaved_changes') }}</b-badge>
                 </b-col>
-                <b-col cols="2">
+                <b-col>
                     <div class="float-right">
-                        <b-button size="lg" variant="danger" class="my-1 ml-2" @click="logout">{{ $t('logout') }}</b-button>
+                        <b-button-group size="sm" class="mr-2">
+                            <b-button v-for="l in availableLocales()" :key="l.iso" :variant="l.iso === $i18n.locale ? 'white' : 'dark border-white'" @click="changeLocale(l.iso)">
+                                {{ l.name }}
+                            </b-button>
+                        </b-button-group>
+                        <b-button size="lg" variant="danger border-white" class="my-1 ml-2" @click="logout">{{ $t('logout') }}</b-button>
                     </div>
                 </b-col>
             </b-row>
@@ -73,6 +78,9 @@ export default {
                 .catch(error => {
                     console.log('LOGOUT Error', error);
                 });
+        },
+        changeLocale(locale) {
+            this.$i18n.locale = locale;
         }
     }
 };
