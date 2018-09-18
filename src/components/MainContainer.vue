@@ -81,6 +81,7 @@ export default {
         },
         changeLocale(locale) {
             this.$i18n.locale = locale;
+            this.$store.commit('setLocale', locale);
         }
     }
 };

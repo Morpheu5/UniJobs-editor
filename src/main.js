@@ -156,7 +156,7 @@ Vue.mixin({
 });
 
 const i18n = new VueI18n({
-    locale: 'it-IT',
+    locale: store.state.locale,
     messages: {
         'en-GB': en_GB,
         'it-IT': it_IT,
