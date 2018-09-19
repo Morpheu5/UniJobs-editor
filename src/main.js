@@ -4,6 +4,13 @@ import VueI18n from "vue-i18n";
 import en_GB from "@/langs/en-GB.js";
 import it_IT from "@/langs/it-IT.js";
 
+import flatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
+import 'flatpickr/dist/themes/light.css';
+
+import VueSimplemde from 'vue-simplemde';
+import {} from 'simplemde/dist/simplemde.min.css';
+
 import axios from "axios";
 
 import _startCase from 'lodash/startCase';
@@ -16,10 +23,6 @@ import {
 
 import "bootstrap/scss/bootstrap.scss";
 import "bootstrap-vue/dist/bootstrap-vue.min.css";
-
-import flatPickr from 'vue-flatpickr-component';
-import 'flatpickr/dist/flatpickr.css';
-import 'flatpickr/dist/themes/light.css';
 
 import App from "./App.vue";
 import store from "./store";
@@ -78,6 +81,7 @@ for (const component of bootstrapComponents) {
 Vue.use(VueRouter);
 Vue.use(VueI18n);
 Vue.use(flatPickr);
+Vue.use(VueSimplemde);
 
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);

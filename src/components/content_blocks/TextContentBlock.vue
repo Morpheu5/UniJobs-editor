@@ -6,7 +6,7 @@
                     <template slot="title">
                         {{ l.name }} <span v-show="!block_data.value.body[l.code] || block_data.value.body[l.code] == ''" class="missing">(missing)</span>
                     </template>
-                    <b-form-textarea v-model="block_data.value.body[l.code].content" :disabled="value.delete" rows="6" />
+                    <markdown-editor v-model="block_data.value.body[l.code].content" :disabled="value.delete" :configs="mdeConfig" />
                 </b-tab>
             </b-tabs>
             <ul v-show="block_data.invalidFeedback" class="invalid_feedback">
@@ -37,7 +37,12 @@ export default {
                 block_type: 'text',
                 uuid: 'uuidv4()',
                 body: this.spreadOverLocales({ content: '' })
-            }, this.value))
+            }, this.value)),
+            mdeConfig: {
+                spellChecker: false,
+                status: false,
+                toolbar: ['bold', 'italic', 'quote', 'unordered-list', 'ordered-list', 'clean-block', 'guide'],
+            }
         };
     },
     watch: {
