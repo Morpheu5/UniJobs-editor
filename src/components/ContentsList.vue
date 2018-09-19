@@ -1,7 +1,7 @@
 <template>
     <div id="content_list_page">
         <b-row>
-            <b-col cols="8">
+            <b-col cols="10">
                 <h2 class="mb-3">{{ $t('sidebar_menu.contents') }}</h2>
             </b-col>
             <b-col cols="2">
@@ -23,7 +23,7 @@
         <div id="content-list">
             <b-row class="header mb-1 no-gutters">
                 <b-col cols="1"></b-col>
-                <b-col cols="4">
+                <b-col cols="3" class="pr-3">
                     <b-input-group>
                         <b-input-group-text slot="prepend" :class="filters.title ? 'bg-primary border-primary' : ''" @click="filters.title = ''">
                             <fa :icon="['fas', filters.title ? 'times' : 'search']" :class="filters.title ? 'text-white' : ''" />
@@ -31,7 +31,15 @@
                         <b-input v-model="filters.title" :placeholder="$t('contents_list.title')" type="text" size="sm"></b-input>
                     </b-input-group>
                 </b-col>
-                <b-col cols="2" class="text-center px-3">
+                <b-col cols="3" class="pr-3">
+                    <b-input-group>
+                        <b-input-group-text slot="prepend" :class="filters.organization ? 'bg-primary border-primary' : ''" @click="filters.organization = ''">
+                            <fa :icon="['fas', filters.organization ? 'times' : 'search']" :class="filters.organization ? 'text-white' : ''" />
+                        </b-input-group-text>
+                        <b-input v-model="filters.organization" :placeholder="$t('contents_list.organization')" type="text" size="sm"></b-input>
+                    </b-input-group>
+                </b-col>
+                <b-col cols="2" class="text-center pr-3">
                     <b-input-group>
                         <b-input-group-text slot="prepend" :class="filters.content_type ? 'bg-primary border-primary' : ''" @click="filters.content_type = null">
                             <fa :icon="['fas', filters.content_type ? 'times' : 'filter']" :class="filters.content_type ? 'text-white' : ''" />
@@ -56,8 +64,11 @@
                         </b-button>
                     </div>
                 </b-col>
-                <b-col cols="4">
+                <b-col cols="3">
                     <div v-for="(v, k) in content.title" :key="`${content.uuid}-${k}`"><span class="lang">{{k}}</span>{{ v }}</div>
+                </b-col>
+                <b-col cols="3">
+                    <div>{{ content.organization.ancestors | formatPath }}</div>
                 </b-col>
                 <b-col cols="2" class="text-center">
                     <div class="mt-3">{{ $t(`content_types.${content.content_type}`) | capitalize }}</div>
@@ -117,6 +128,9 @@ export default {
         formatDate(d) {
             let date = new Date(d);
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+        },
+        formatPath(path) {
+            return path ? path.map((e, i, a) => (i < a.length-1 ? e.short_name : e.name)).join(' › ') : '';
         }
     },
     data() {
@@ -124,6 +138,7 @@ export default {
             contents: [],
             filters: {
                 title: '',
+                organization: '',
                 content_type: null,
             },
             toBeDeleted: [],
@@ -135,6 +150,13 @@ export default {
             if (this.filters.title !== '') {
                 const titleFilters = new RegExp(this.filters.title.split(new RegExp(',| ')).filter(e => e !== '').join('|'), 'i');
                 filteredContents = filteredContents.filter(content => Object.values(content.title).some(v => v.match(titleFilters)));
+            }
+            if (this.filters.organization !== '') {
+                const organizationFilters = this.filters.organization.split(new RegExp(',| ')).filter(e => e !== '').map(e => new RegExp(e, 'i'));
+                console.log(organizationFilters);
+                filteredContents = filteredContents.filter(content => {
+                    return organizationFilters.every(f => content.organization.ancestors.map(e => `${e.name} ${e.short_name}`).join(' ').match(f));
+                });
             }
             if (this.filters.content_type !== null) {
                 filteredContents = filteredContents.filter(content => content.content_type === this.filters.content_type);

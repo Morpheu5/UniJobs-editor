@@ -26,6 +26,7 @@ export default {
     },
     contents_list: {
         title: 'Title',
+        organization: 'Organization',
         content_type: 'Content Type',
         create_new: 'Create new…',
         created: 'Created',
