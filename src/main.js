@@ -95,6 +95,10 @@ let axiosObject = axios.create({
 });
 axiosObject.interceptors.request.use(function(config) {
     config.headers['Content-Type'] = 'application/json';
+    config.headers.common['Accept'] = [
+        'appplication/json',
+        'application/vnd.unijobs.it.api.v1'
+    ];
     const t = localStorage.getItem('unijobs_magic_token');
     if (null !== t) {
         config.headers.Authorization = `Bearer ${t}`;
