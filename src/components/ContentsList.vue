@@ -183,7 +183,7 @@ export default {
     },
     created() {
         this.$axios
-            .get("/contents")
+            .get("/api/contents")
             .then(response => {
                 this.contents = response.data;
             })
@@ -197,7 +197,7 @@ export default {
     },
     methods: {
         deleteContent() {
-            const deleteRequests = this.toBeDeleted.map(e => this.$axios.delete(`/contents/${e}`));
+            const deleteRequests = this.toBeDeleted.map(e => this.$axios.delete(`/api/contents/${e}`));
 
             Promise.all(deleteRequests)
                 .then(responses => {

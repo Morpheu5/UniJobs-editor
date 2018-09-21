@@ -254,7 +254,7 @@ export default {
         },
         fetchContent() {
             return this.$axios
-                .get(`/contents/${this.id}`)
+                .get(`/api/contents/${this.id}`)
                 .then(response => {
                     // Add the "delete" property on the fly to the response data before assigning it
                     // to the component, otherwise stuff will not bind to it.
@@ -306,7 +306,7 @@ export default {
             if (this.id === 'new') {
                 // Create (POST)
                 this.$axios
-                    .post('/contents', contentParams)
+                    .post('/api/contents', contentParams)
                     .then(response => {
                         // Content created!
                         this.$router.push({ path: `/contents/${response.data.id}/edit`});
@@ -321,7 +321,7 @@ export default {
             } else if (this.content.document.id) {
                 // Edit (PATCH)
                 this.$axios
-                    .patch(`/contents/${this.content.document.id}`, contentParams)
+                    .patch(`/api/contents/${this.content.document.id}`, contentParams)
                     .then(_response => {
                         // Content edited!
                         this.fetchContent()
@@ -348,7 +348,7 @@ export default {
         },
         deleteContent() {
             this.$axios
-                .delete(`/contents/${this.content.document.id}`)
+                .delete(`/api/contents/${this.content.document.id}`)
                 .then(_response => {
                 this.$router.push({ path: '/contents', });
                     this.$root.$emit("global-notification", {

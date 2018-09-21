@@ -79,7 +79,7 @@ export default {
             let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w != '');
 
             this.$axios
-            .get(`/organizations?q=${queryArray.join(' ')}`)
+            .get(`/api/organizations?q=${queryArray.join(' ')}`)
             .then(response => {
                 this.organizationSearchQueryDirty = false;
                 this.organizationSearchQueryFetching = false;
