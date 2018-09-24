@@ -13,7 +13,7 @@ export default {
         dashboard: 'Dashboard',
         contents: 'Contenuti',
     },
-    login: {
+    login_page: {
         email_address: 'E-mail address',
         password: 'Password',
     },

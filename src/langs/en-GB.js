@@ -1,6 +1,6 @@
 export default {
-    login: 'Entra',
-    logout: 'Esci',
+    login: 'Login',
+    logout: 'Logout',
     yes: 'Yes',
     no: 'No',
     cancel: 'Cancel',
@@ -13,7 +13,7 @@ export default {
         dashboard: 'Dashboard',
         contents: 'Your contents',
     },
-    login: {
+    login_page: {
         email_address: 'E-mail address',
         password: 'Password',
     },

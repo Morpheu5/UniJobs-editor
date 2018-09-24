@@ -15,7 +15,7 @@
                         <b-input-group>
                             <b-input id="login-email"
                                      v-model="email"
-                                     :placeholder="$t('login.email_address')"
+                                     :placeholder="$t('login_page.email_address')"
                                      name="username"
                                      type="email"
                                      class="my-3"
@@ -27,7 +27,7 @@
                             <b-input id="login-password"
                                      v-model="password"
                                      :type="showPassword ? 'text' : 'password'"
-                                     :placeholder="$t('login.password')"
+                                     :placeholder="$t('login_page.password')"
                                      name="password"
                                      class=""
                                      required
