@@ -22,6 +22,34 @@
             </div>
         </b-card>
 
+        <b-card :class="metadata.contest_sector.validity" class="mt-3">
+            <template slot="header">
+                <h6 class="m-0">{{ $t('content_meta.contest_sector') }}</h6>
+            </template>
+
+            <b-input-group>
+                <b-input v-model="metadata.contest_sector.value" :placeholder="$t('content_meta.contest_sector_placeholder')" />
+            </b-input-group>
+
+            <ul v-show="metadata.contest_sector.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.contest_sector.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
+        </b-card>
+
+        <b-card :class="metadata.scientific_sector.validity" class="mt-3">
+            <template slot="header">
+                <h6 class="m-0">{{ $t('content_meta.scientific_sector') }}</h6>
+            </template>
+
+            <b-input-group>
+                <b-input v-model="metadata.scientific_sector.value" :placeholder="$t('content_meta.scientific_sector_placeholder')" />
+            </b-input-group>
+
+            <ul v-show="metadata.scientific_sector.invalidFeedback.length > 0" class="invalid_feedback">
+                <li v-for="(v, k) in metadata.scientific_sector.invalidFeedback" :key="k">{{ v }}</li>
+            </ul>
+        </b-card>
+
         <b-card :class="[metadata.salary.validity, metadata.tax_status.validity].includes('invalid') ? 'invalid' : null" class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">{{ $t('content_meta.salary') }} (&euro;)</h6>
@@ -107,6 +135,8 @@ import OrganizationsPicker from '@/components/content_metadata/OrganizationsPick
 class JobMetadataData {
     constructor(data) {
         this.published = new Input(data.published);
+        this.contest_sector = new Input(data.contest_sector);
+        this.scientific_sector = new Input(data.scientific_sector);
         this.job_title = new Input(data.job_title);
         this.salary = new Input(data.salary);
         this.tax_status = new Input(data.tax_status);
@@ -117,6 +147,8 @@ class JobMetadataData {
     get document() {
         return {
             published: this.published.value,
+            contest_sector: this.contest_sector.value,
+            scientific_sector: this.scientific_sector.value,
             job_title: this.job_title.value,
             salary: this.salary.value,
             tax_status: this.tax_status.value,
@@ -186,6 +218,8 @@ export default {
         return {
             metadata: new JobMetadataData(_merge({
                 published: false,
+
+                scientific_sector: '',
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
                 tax_status: null,
