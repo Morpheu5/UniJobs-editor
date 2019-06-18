@@ -20,7 +20,7 @@
 
                             <b-navbar-nav class="ml-auto">
                                 <b-button-group size="sm" class="my-1 mr-2">
-                                    <b-button v-for="l in availableLocales()" :key="l.iso" :variant="l.iso === $i18n.locale ? 'white' : 'dark border-white'" size="sm" @click="changeLocale(l.iso)">
+                                    <b-button v-for="l in availableLocales()" :key="l.iso" :variant="l.iso === $i18n.locale ? 'light' : 'dark border-light'" size="sm" @click="changeLocale(l.iso)">
                                         {{ l.name }}
                                     </b-button>
                                 </b-button-group>

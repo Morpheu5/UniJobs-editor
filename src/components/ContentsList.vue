@@ -23,7 +23,7 @@
         <div id="content-list">
             <b-row class="header mb-1 no-gutters">
                 <b-col cols="1"></b-col>
-                <b-col cols="3" class="pr-3">
+                <b-col cols="5" class="pr-3">
                     <b-input-group>
                         <b-input-group-text slot="prepend" :class="filters.title ? 'bg-primary border-primary' : ''" @click="filters.title = ''">
                             <fa :icon="['fas', filters.title ? 'times' : 'search']" :class="filters.title ? 'text-white' : ''" />
@@ -50,8 +50,8 @@
                 <b-col cols="1">
                     {{ $t('content_meta.published') }}
                 </b-col>
-                <b-col cols="1">{{ $t('contents_list.created') }}</b-col>
-                <b-col cols="1">{{ $t('contents_list.updated') }}</b-col>
+                <!-- <b-col cols="1">{{ $t('contents_list.created') }}</b-col> -->
+                <!-- <b-col cols="1">{{ $t('contents_list.updated') }}</b-col> -->
             </b-row>
             <b-row v-for="(content, index) in filteredContents" :key="content.uuid" :class="{ even: (index%2), odd: !(index%2), first: !index, last: index == contents.length-1 }" class="py-2 content no-gutters" >
                 <b-col cols="1">
@@ -64,7 +64,7 @@
                         </b-button>
                     </div>
                 </b-col>
-                <b-col cols="3">
+                <b-col cols="5">
                     <div v-for="(v, k) in content.title" :key="`${content.uuid}-${k}`"><span class="lang">{{k}}</span>{{ v }}</div>
                 </b-col>
                 <b-col cols="3">
@@ -79,8 +79,8 @@
                         <fa v-else :icon="['far', 'square']" size="lg" />
                     </div>
                 </b-col>
-                <b-col cols="1">{{ content.created_at | formatDate }}</b-col>
-                <b-col cols="1">{{ content.updated_at | formatDate }}</b-col>
+                <!-- <b-col cols="1">{{ content.created_at | formatDate }}</b-col> -->
+                <!-- <b-col cols="1">{{ content.updated_at | formatDate }}</b-col> -->
             </b-row>
         </div>
 
@@ -153,7 +153,7 @@ export default {
             }
             if (this.filters.organization !== '') {
                 const organizationFilters = this.filters.organization.split(new RegExp(',| ')).filter(e => e !== '').map(e => new RegExp(e, 'i'));
-                console.log(organizationFilters);
+                // console.log(organizationFilters);
                 filteredContents = filteredContents.filter(content => {
                     return organizationFilters.every(f => content.organization.ancestors.map(e => `${e.name} ${e.short_name}`).join(' ').match(f));
                 });
@@ -200,22 +200,23 @@ export default {
             const deleteRequests = this.toBeDeleted.map(e => this.$axios.delete(`/api/contents/${e}`));
 
             Promise.all(deleteRequests)
-                .then(responses => {
+                .then(_responses => {
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: this.$t('content_editor.delete_content_success')
                     });
-                    console.log(responses);
-                    // TODO Finish up updating list
+                    console.log(this.toBeDeleted);
+                    this.contents = this.contents.filter(content => !this.toBeDeleted.includes(content.id));
                 })
                 .catch(errors => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
                         message: `${this.$t('content_editor.delete_content_fail')}<br/>${errors}`
                     });
+                })
+                .finally(() => {
+                    this.toBeDeleted = [];
                 });
-
-            this.toBeDeleted = [];
         }
     }
 };
