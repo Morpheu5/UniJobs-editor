@@ -71,6 +71,7 @@ library.add(
 );
 
 Vue.config.productionTip = false;
+Vue.config.debug = true;
 
 const bootstrapComponents = [
     Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
@@ -133,7 +134,7 @@ const routes = [
 
 const router = new VueRouter({
     base: process.env.VUE_APP_ROUTER_BASE || '/',
-    mode: 'history',
+    // mode: 'history',
     routes
 });
 router.beforeEach((to, from, next) => {
