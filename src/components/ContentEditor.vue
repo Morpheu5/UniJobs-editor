@@ -42,7 +42,7 @@
                         </b-col>
                     </b-row>
                     <b-row class="mt-2">
-                        <component v-model="content.content_blocks[i]" :contentId="id" :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" class="validatable" />
+                        <component :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" ref="validatable" v-model="content.content_blocks[i]" :contentId="id" class="validatable" />
                     </b-row>
                 </div>
 
@@ -75,7 +75,7 @@
                         <h6 class="m-0">{{ $t('content_editor.meta') }}</h6>
                     </template>
 
-                    <component v-model="content.metadata" :organization="content.organization" :is="contentTypeToComponentMetaName(content.content_type.value)" class="validatable" @updateOrganization="updateOrganization" />
+                    <component :is="contentTypeToComponentMetaName(content.content_type.value)" ref="validatable" v-model="content.metadata" :organization="content.organization" class="validatable" @updateOrganization="updateOrganization" />
                 </b-card>
             </b-col>
         </b-row>
@@ -111,7 +111,6 @@
     }
 }
 </style>
-
 
 <script>
 import _camelCase from 'lodash/camelCase';
@@ -150,7 +149,7 @@ class Content {
             title: this.title.value,
             metadata: this.metadata,
             organization: this.organization.value,
-            content_blocks: this.content_blocks,
+            content_blocks: this.content_blocks
         };
     }
 
@@ -198,7 +197,7 @@ export default {
         return {
             content: null,
             referenceDocument: null,
-            documentDirty: false,
+            documentDirty: false
         };
     },
     watch: {
@@ -230,7 +229,7 @@ export default {
         } else {
             this.fetchContent()
                 .then(contentArgs => {
-                    if (null !== contentArgs) {
+                    if (contentArgs) {
                         this.content = new Content(_cloneDeep(contentArgs));
                         this.referenceDocument = new Content(_cloneDeep(contentArgs));
                     }
@@ -279,8 +278,13 @@ export default {
         },
 
         validate() {
-            const validatable = this.$children.filter(e => e.$el.classList.contains('validatable'));
-            const childrenValidity = validatable.map(e => e.validate()).reduce((a, e) => a && e);
+            // const validatable = this.$children.filter(e => {
+            //     console.log(!e.$el.classList && e.$el);
+            //     return e.$el.classList && e.$el.classList.contains('validatable')
+            // });
+            const validatable = this.$refs.validatable;
+            const childrenValidity = validatable.validate(); // validatable.map(e => e.validate()).reduce((a, e) => a && e);
+            // Oddly enough, this works. I don't understand how, though.
 
             return this.content.validate() && childrenValidity;
         },
@@ -299,7 +303,7 @@ export default {
                     {
                         organization_id: this.content.document.organization.id,
                         content_blocks_attributes: this.content.content_blocks,
-                        user_id: this.$store.state.user.id,
+                        user_id: this.$store.state.user.id
                     }
                 )
             };
@@ -309,7 +313,7 @@ export default {
                     .post('/api/contents', contentParams)
                     .then(response => {
                         // Content created!
-                        this.$router.push({ path: `/contents/${response.data.id}/edit`});
+                        this.$router.push({ path: `/contents/${response.data.id}/edit` });
                         this.$router.go();
                     }).catch(error => {
                         // Error creating the content
@@ -326,7 +330,7 @@ export default {
                         // Content edited!
                         this.fetchContent()
                             .then(contentArgs => {
-                                if (null !== contentArgs) {
+                                if (contentArgs) {
                                     this.content = new Content(_cloneDeep(contentArgs));
                                     this.referenceDocument = new Content(_cloneDeep(contentArgs));
                                 }
@@ -350,7 +354,7 @@ export default {
             this.$axios
                 .delete(`/api/contents/${this.content.document.id}`)
                 .then(_response => {
-                this.$router.push({ path: '/contents', });
+                this.$router.push({ path: '/contents' });
                     this.$root.$emit("global-notification", {
                         type: "success",
                         message: this.$t('content_editor.delete_content_success')
