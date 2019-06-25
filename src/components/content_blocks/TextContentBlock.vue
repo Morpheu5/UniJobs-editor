@@ -41,7 +41,7 @@ export default {
             mdeConfig: {
                 spellChecker: false,
                 status: false,
-                toolbar: ['bold', 'italic', 'quote', 'unordered-list', 'ordered-list', 'clean-block', 'guide'],
+                toolbar: ['bold', 'italic', 'quote', 'unordered-list', 'ordered-list', 'clean-block', 'guide']
             }
         };
     },

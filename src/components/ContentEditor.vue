@@ -42,7 +42,7 @@
                         </b-col>
                     </b-row>
                     <b-row class="mt-2">
-                        <component :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" ref="validatable" v-model="content.content_blocks[i]" :contentId="id" class="validatable" />
+                        <component :is="contentTypeToComponentBlockName(content.content_blocks[i].block_type)" v-model="content.content_blocks[i]" :contentId="id" class="validatable" />
                     </b-row>
                 </div>
 
@@ -75,7 +75,7 @@
                         <h6 class="m-0">{{ $t('content_editor.meta') }}</h6>
                     </template>
 
-                    <component :is="contentTypeToComponentMetaName(content.content_type.value)" ref="validatable" v-model="content.metadata" :organization="content.organization" class="validatable" @updateOrganization="updateOrganization" />
+                    <component :is="contentTypeToComponentMetaName(content.content_type.value)" v-model="content.metadata" :organization="content.organization" class="validatable" @updateOrganization="updateOrganization" />
                 </b-card>
             </b-col>
         </b-row>
@@ -278,13 +278,8 @@ export default {
         },
 
         validate() {
-            // const validatable = this.$children.filter(e => {
-            //     console.log(!e.$el.classList && e.$el);
-            //     return e.$el.classList && e.$el.classList.contains('validatable')
-            // });
-            const validatable = this.$refs.validatable;
-            const childrenValidity = validatable.validate(); // validatable.map(e => e.validate()).reduce((a, e) => a && e);
-            // Oddly enough, this works. I don't understand how, though.
+            const validatable = this.$children.filter(e => e.$el.classList && e.$el.classList.contains('validatable'));
+            const childrenValidity = validatable.map(e => e.validate()).reduce((a, e) => a && e);
 
             return this.content.validate() && childrenValidity;
         },
