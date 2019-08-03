@@ -24,7 +24,7 @@
             </template>
 
             <OrganizationsPicker v-model="thisOrganization" />
-            
+
             <ul v-show="organization.invalidFeedback.length > 0" class="invalid_feedback">
                 <li v-for="(v, k) in organization.invalidFeedback" :key="k">{{ v }}</li>
             </ul>
@@ -50,7 +50,7 @@ class PageMetadataData {
     get document() {
         return {
             published: this.published.value,
-            slug: this.slug.value,
+            slug: this.slug.value
         };
     }
 
@@ -90,7 +90,7 @@ export default {
                 published: false,
                 slug: ''
             }, this.value)),
-            thisOrganization: _cloneDeep(this.organization),
+            thisOrganization: _cloneDeep(this.organization)
         };
     },
     watch: {

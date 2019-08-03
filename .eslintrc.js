@@ -15,12 +15,13 @@ module.exports = {
     'vue/attributes-order': 'error',
     'vue/order-in-components': 'error',
     'semi': ['error', 'always'],
-    'indent': 'off', //['error', 4],
+    'indent': 'off', // ['error', 4],
     'space-before-function-paren': ['error', 'never'],
     'eol-last': 'off',
-    'quotes': 'off'
+    'quotes': 'off',
+    'camelcase': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'
   }
-}
+};

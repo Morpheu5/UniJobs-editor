@@ -123,7 +123,6 @@ input.flatpickr-input.form-control {
 }
 </style>
 
-
 <script>
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
@@ -153,7 +152,7 @@ class JobMetadataData {
             salary: this.salary.value,
             tax_status: this.tax_status.value,
             deadline: this.deadline.value,
-            url: this.url.value,
+            url: this.url.value
         };
     }
 
@@ -218,8 +217,8 @@ export default {
         return {
             metadata: new JobMetadataData(_merge({
                 published: false,
-
-                scientific_sector: '',
+                contest_sector: [],
+                scientific_sector: [],
                 job_title: this.spreadOverLocales({ content: '' }),
                 salary: '',
                 tax_status: null,

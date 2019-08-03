@@ -7,11 +7,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     plugins: [
-        createPersistedState(),
+        createPersistedState()
     ],
     state: {
         user: null,
-        locale: 'it-IT',
+        locale: 'it-IT'
     },
     mutations: {
         setUser(state, user) {
@@ -19,7 +19,7 @@ export default new Vuex.Store({
         },
         setLocale(state, locale) {
             state.locale = locale;
-        },
+        }
     },
     actions: {}
 });

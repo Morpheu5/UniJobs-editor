@@ -7,22 +7,22 @@ export default {
     save: 'Salva',
     delete: 'Elimina',
     main_container: {
-        unsaved_changes: 'Ci sono modifiche non salvate in questa pagina.',
+        unsaved_changes: 'Ci sono modifiche non salvate in questa pagina.'
     },
     sidebar_menu: {
         dashboard: 'Dashboard',
-        contents: 'Contenuti',
+        contents: 'Contenuti'
     },
     login_page: {
         email_address: 'E-mail address',
-        password: 'Password',
+        password: 'Password'
     },
     content_types: {
         job: 'offerta di lavoro',
-        page: 'pagina',
+        page: 'pagina'
     },
     block_types: {
-        text: 'Testo',
+        text: 'Testo'
     },
     contents_list: {
         title: 'Titolo',
@@ -31,7 +31,7 @@ export default {
         create_new: 'Crea…',
         created: 'Creato',
         updated: 'Aggiornato',
-        retrieve_list_failed: `C'è stato un problema nel recuperare la lista dei contenuti.`,
+        retrieve_list_failed: `C'è stato un problema nel recuperare la lista dei contenuti.`
     },
     content_editor: {
         summary_title: 'Titolo',
@@ -51,7 +51,7 @@ export default {
         delete_content_success: 'Contenuto cancellato correttamente.',
         delete_content_fail: `C'è stato un problema nel cancellare questo contenuto.`,
         save_content_success: 'Contenuto salvato correttamente.',
-        save_content_fail: `C'è stato un problema nel salvare questo contenuto.`,
+        save_content_fail: `C'è stato un problema nel salvare questo contenuto.`
     },
     content_meta: {
         published: 'Pubblicato',
@@ -71,6 +71,6 @@ export default {
         salary_tax_exempt: 'Esentasse',
         application_deadline: 'Scadenza per fare domanda',
         application_url: 'URL per fare domanda',
-        application_url_placeholder: 'https://…',
+        application_url_placeholder: 'https://…'
     }
 };

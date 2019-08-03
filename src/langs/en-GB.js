@@ -7,22 +7,22 @@ export default {
     save: 'Save',
     delete: 'Delete',
     main_container: {
-        unsaved_changes: 'There are unsaved changes in this page.',
+        unsaved_changes: 'There are unsaved changes in this page.'
     },
     sidebar_menu: {
         dashboard: 'Dashboard',
-        contents: 'Your contents',
+        contents: 'Your contents'
     },
     login_page: {
         email_address: 'E-mail address',
-        password: 'Password',
+        password: 'Password'
     },
     content_types: {
         job: 'job offer',
-        page: 'page',
+        page: 'page'
     },
     block_types: {
-        text: 'Text',
+        text: 'Text'
     },
     contents_list: {
         title: 'Title',
@@ -31,7 +31,7 @@ export default {
         create_new: 'Create new…',
         created: 'Created',
         updated: 'Updated',
-        retrieve_list_fail: 'There was a problem retrieving the list of contents.',
+        retrieve_list_fail: 'There was a problem retrieving the list of contents.'
     },
     content_editor: {
         summary_title: 'Summary title',
@@ -52,7 +52,7 @@ export default {
         delete_content_success: 'Content deleted succesfully.',
         delete_content_fail: 'Something went wrong while deleting content.',
         save_content_success: 'Content saved correctly.',
-        save_content_fail: 'Something went wrong while saving this content.',
+        save_content_fail: 'Something went wrong while saving this content.'
     },
     content_meta: {
         published: 'Published',
@@ -72,6 +72,6 @@ export default {
         salary_tax_exempt: 'Tax Exempt',
         application_deadline: 'Application deadline',
         application_url: 'Application URL',
-        application_url_placeholder: 'https://…',
+        application_url_placeholder: 'https://…'
     }
 };

@@ -118,7 +118,6 @@
 }
 </style>
 
-
 <script>
 import _uniq from 'lodash/uniq';
 import _capitalize from 'lodash/capitalize';
@@ -130,7 +129,7 @@ export default {
             return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
         },
         formatPath(path) {
-            return path ? path.map((e, i, a) => (i < a.length-1 ? e.short_name : e.name)).join(' › ') : '';
+            return path ? path.map((e, i, a) => (i < a.length - 1 ? e.short_name : e.name)).join(' › ') : '';
         }
     },
     data() {
@@ -139,9 +138,9 @@ export default {
             filters: {
                 title: '',
                 organization: '',
-                content_type: null,
+                content_type: null
             },
-            toBeDeleted: [],
+            toBeDeleted: []
         };
     },
     computed: {
@@ -164,9 +163,9 @@ export default {
             return filteredContents;
         },
         contentTypes() {
-            let options = [{ value: null, text: this.$t('contents_list.content_type')}];
+            let options = [{ value: null, text: this.$t('contents_list.content_type') }];
             let otherOptions = _uniq(this.contents.map(c => c.content_type))
-                                .map(t => ({ value: t, text: _capitalize(this.$t(`content_types.${t}`))}));
+                                .map(t => ({ value: t, text: _capitalize(this.$t(`content_types.${t}`)) }));
             return [...options, ...otherOptions];
         },
         contentTypesForCreation() {
@@ -175,7 +174,7 @@ export default {
             }
             const types = [
                 { id: 'job', roles: ['ADMIN', 'CONTENT_EDITOR', 'JOB_EDITOR'] },
-                { id: 'page', roles: ['ADMIN', 'CONTENT_EDITOR'] },
+                { id: 'page', roles: ['ADMIN', 'CONTENT_EDITOR'] }
             ];
             const userRole = this.$store.state.user.role;
             return types.filter(type => type.roles.includes(userRole));

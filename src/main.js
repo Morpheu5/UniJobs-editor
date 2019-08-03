@@ -18,7 +18,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _capitalize from 'lodash/capitalize';
 
 import {
-    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs
 } from 'bootstrap-vue/es/components';
 
 import "bootstrap/scss/bootstrap.scss";
@@ -74,7 +74,7 @@ Vue.config.productionTip = false;
 Vue.config.debug = true;
 
 const bootstrapComponents = [
-    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs,
+    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Tabs
 ];
 for (const component of bootstrapComponents) {
     Vue.use(component);
@@ -101,7 +101,7 @@ axiosObject.interceptors.request.use(function(config) {
         'application/vnd.unijobs.it.api.v1'
     ];
     const t = localStorage.getItem('unijobs_magic_token');
-    if (null !== t) {
+    if (t !== null) {
         config.headers.Authorization = `Bearer ${t}`;
     }
     return config;
@@ -120,12 +120,14 @@ Vue.filter('capitalize', function(value) {
 const routes = [
     { path: "/login", component: Login },
     {
-        path: "/", component: MainContainer, redirect: '/dashboard',
+        path: "/",
+component: MainContainer,
+redirect: '/dashboard',
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "contents", component: ContentsList },
             { path: "contents/:content_type/new", component: ContentEditor, props: route => ({ id: "new", content_type: route.params['content_type'] }) },
-            { path: "contents/:id/edit", component: ContentEditor, props: true },
+            { path: "contents/:id/edit", component: ContentEditor, props: true }
         ]
     },
 
@@ -140,7 +142,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if (to.matched.some(route => !['/login'].includes(route.path))) {
         let t = localStorage.getItem('unijobs_magic_token');
-        if (null === t) {
+        if (t === null) {
             next({
                 path: "/login",
                 query: {
@@ -160,7 +162,7 @@ Vue.mixin({
             return [ { code: "it", iso: "it-IT", name: "Italiano" }, { code: "en", iso: "en-GB", name: "English" } ];
         },
         spreadOverLocales(o) {
-            return this.availableLocales().map(l => l.code).reduce((a, e) => ({...a, [e]: _cloneDeep(o)}), {});
+            return this.availableLocales().map(l => l.code).reduce((a, e) => ({ ...a, [e]: _cloneDeep(o) }), {});
         }
     }
 });
@@ -169,7 +171,7 @@ const i18n = new VueI18n({
     locale: store.state.locale,
     messages: {
         'en-GB': en_GB,
-        'it-IT': it_IT,
+        'it-IT': it_IT
     }
 });
 

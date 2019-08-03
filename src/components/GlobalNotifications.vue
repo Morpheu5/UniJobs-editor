@@ -33,7 +33,7 @@ export default {
             this.notifications = [...this.notifications, n];
         },
         removeNotification(n) {
-            this.notifications = this.notifications.filter(e => n != e);
+            this.notifications = this.notifications.filter(e => n !== e);
         }
     }
 };

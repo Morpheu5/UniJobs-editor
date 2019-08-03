@@ -3,7 +3,7 @@
         <p v-show="thisOrganization.ancestors && thisOrganization.ancestors.length > 0">
             <fa :icon="['fas', 'times']" size="sm" class="mr-1 text-danger" @click="thisOrganization = { ancestors: [] }" /> {{ thisOrganization.ancestors | formatPath }}
         </p>
-        
+
         <b-input-group>
             <b-input-group-text slot="append" :class="organizationSearchQuery ? 'bg-primary border-primary' : ''" @click="organizationSearchQuery = ''">
                 <fa :icon="['fas', organizationSearchQuery ? 'times' : 'search']" :class="organizationSearchQuery ? 'text-white' : ''" />
@@ -38,7 +38,7 @@ import _omit from 'lodash/omit';
 export default {
     filters: {
         formatPath(path) {
-            return path ? path.map((e, i, a) => (i < a.length-1 ? e.short_name : e.name)).join(' › ') : '';
+            return path ? path.map((e, i, a) => (i < a.length - 1 ? e.short_name : e.name)).join(' › ') : '';
         }
     },
     props: {
@@ -50,7 +50,7 @@ export default {
     data() {
         return {
             thisOrganization: _cloneDeep(this.value.value),
-            
+
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
             organizationSearchQueryFetching: false,
@@ -61,7 +61,7 @@ export default {
     watch: {
         thisOrganization: {
             handler: function(newOrg) {
-                _merge(newOrg, newOrg.ancestors[newOrg.ancestors.length-1]);
+                _merge(newOrg, newOrg.ancestors[newOrg.ancestors.length - 1]);
                 this.$emit('input', this.thisOrganization);
             }
         },
@@ -76,14 +76,14 @@ export default {
         fetchOrganizations: _debounce(function() {
             this.organizationSearchQueryFetching = true;
 
-            let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w != '');
+            let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w !== '');
 
             this.$axios
             .get(`/api/organizations?q=${queryArray.join(' ')}`)
             .then(response => {
                 this.organizationSearchQueryDirty = false;
                 this.organizationSearchQueryFetching = false;
-                
+
                 this.organizationSearchResults = response.data;
             })
             .catch(_error => {
@@ -103,9 +103,8 @@ export default {
         },
         flattenForest(forest) {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
-                         .map(t => ({ organization_id: t[t.length-1].id, ancestors: t }));
-        },
+                         .map(t => ({ organization_id: t[t.length - 1].id, ancestors: t }));
+        }
     }
 };
 </script>
-
