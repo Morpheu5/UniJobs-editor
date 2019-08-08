@@ -72,6 +72,10 @@ export default {
         salary_tax_exempt: 'Tax Exempt',
         application_deadline: 'Application deadline',
         application_url: 'Application URL',
-        application_url_placeholder: 'https://…'
+        application_url_placeholder: 'https://…',
+        'ricercatore-tipo-a': 'Researcher (type A)',
+        'ricercatore-tipo-b': 'Senior Researcher (type B)',
+        'professore-prima-fascia': 'Professor',
+        'professore-seconda-fascia': 'Associate Professor'
     }
 };

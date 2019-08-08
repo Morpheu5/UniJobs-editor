@@ -191,6 +191,10 @@ export default {
         content_type: {
             type: String,
             required: false
+        },
+        import_id: {
+            type: String,
+            required: false
         }
     },
     data() {
@@ -214,7 +218,7 @@ export default {
         }
     },
     created() {
-        if (this.id === 'new') {
+        if (this.id === 'new' && !this.import_id) {
             const contentArgs = {
                 id: null,
                 uuid: 0,
@@ -226,6 +230,14 @@ export default {
             };
             this.content = new Content(_cloneDeep(contentArgs));
             this.referenceDocument = new Content(_cloneDeep(contentArgs));
+        } else if (this.id === 'new' && this.import_id) {
+            this.fetchImport()
+                .then(contentArgs => {
+                    if (contentArgs) {
+                        this.content = new Content(_cloneDeep(contentArgs));
+                        this.referenceDocument = new Content(_cloneDeep(contentArgs));
+                    }
+                });
         } else {
             this.fetchContent()
                 .then(contentArgs => {
@@ -275,6 +287,54 @@ export default {
                     });
                     return null;
                 });
+        },
+        async fetchImport() {
+            const documentResponse = await this.$couchdb
+                .get(`/${this.import_id}`)
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.retrieve_import_fail')}<br/>${error}`
+                    });
+                });
+            const docData = documentResponse.data;
+            docData.organization_short_name = 'DEI';
+            const organizationResponse = await this.$axios
+                .get(`/api/organizations?q=${docData.organization_id}%20${docData.organization_short_name}`)
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.organization_query_fail')}<br/>${error}`
+                    });
+                });
+            let content = {
+                content_type: 'job',
+                title: docData.description,
+                metadata: {
+                    job_title_candidates: docData.job_title,
+                    salary_candidates: docData.salary.map(s => s.replace('.', '')),
+                    tax_status: { lordo: 'gross', esentasse: 'tax-exempt', netto: 'net' }[docData.tax_status],
+                    contest_sector: docData.contest_sector,
+                    scientific_sector: docData.scientific_sector
+                }
+            };
+            const orgData = organizationResponse.data.filter(o => o.short_name === docData.organization_short_name)[0];
+            if (orgData) {
+                const ancestorsResponse = await this.$axios
+                    .get(`/api/organizations/${orgData.id}/ancestors`)
+                    .catch(error => {
+                        this.$root.$emit("global-notification", {
+                            type: "danger",
+                            message: `${this.$t('content_editor.organization_ancestors_query_fail')}<br/>${error}`
+                        });
+                    });
+                content.organization = { ...orgData, ancestors: ancestorsResponse.data };
+            } else {
+                content.organization = {};
+            }
+            return new Promise(function(resolve) {
+                resolve(content);
+            });
         },
 
         validate() {

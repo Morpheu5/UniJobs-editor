@@ -8,16 +8,20 @@
             </template>
 
             <div class="px-3 pb-3">
-                <b-input-group v-for="l in availableLocales()" :key="l.name" class="mt-3">
-                    <b-input-group-text slot="prepend" class="text-monospace">
-                        <small>{{ l.code }}</small>
-                    </b-input-group-text>
+                <b-select v-model="metadata.job_title.value" :options="job_title_options" class="mt-3"></b-select>
 
-                    <b-input v-model="metadata.job_title.value[l.code].content" :placeholder="$t('content_meta.job_title_placeholder', l.iso)" required></b-input>
-                </b-input-group>
+                <div v-if="metadata.job_title.value === null">
+                    <b-input-group v-for="l in availableLocales()" :key="l.name" class="mt-3">
+                        <b-input-group-text slot="prepend" class="text-monospace">
+                            <small>{{ l.code }}</small>
+                        </b-input-group-text>
+
+                        <b-input v-model="metadata.job_title_alt.value[l.code].content" :placeholder="$t('content_meta.job_title_placeholder', l.iso)" required></b-input>
+                    </b-input-group>
+                </div>
 
                 <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
-                    <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k">{{ v }}</li>
+                    <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k" @click={}>{{ v }}</li>
                 </ul>
             </div>
         </b-card>
@@ -50,7 +54,6 @@
             </template>
 
             <b-input-group>
-                <!-- <b-input v-model="metadata.scientific_sector.value" :placeholder="$t('content_meta.scientific_sector_placeholder')" /> -->
                 <vue-tags-input
                     v-model="scientific_sector_input_tag"
                     :add-on-key="[13, ',', ';']"
@@ -73,6 +76,9 @@
             </template>
 
             <b-form-input v-model="metadata.salary.value" :placeholder="$t('content_meta.salary_placeholder')" required></b-form-input>
+            <div v-if="metadata.salary_candidates && metadata.salary_candidates.length > 0">
+                <b-button v-for="(v, k) in metadata.salary_candidates" :key="k" class="mr-3 mt-3" size="sm" :variant="v === metadata.salary.value ? 'primary' : 'outline-primary'" @click="metadata.salary.value = v">{{ v }}</b-button>
+            </div>
             <b-radio-group id="tax_status" v-model="metadata.tax_status.value" class="mt-3" required>
                 <b-radio value="gross" name="tax_status">{{ $t('content_meta.salary_gross') }}</b-radio>
                 <b-radio value="tax-exempt" name="tax_status">{{ $t('content_meta.salary_tax_exempt') }}</b-radio>
@@ -174,11 +180,15 @@ class JobMetadataData {
         this.published = new Input(data.published);
         this.contest_sector = new Input(data.contest_sector);
         this.scientific_sector = new Input(data.scientific_sector);
-        this.job_title = new Input(data.job_title);
-        this.salary = new Input(data.salary);
+        this.job_title = new Input(data.job_title || data.job_title_candidates[0]);
+        this.job_title_alt = new Input(data.job_title_alt || this.spreadOverLocales({ content: '' }));
+        this.salary = new Input(data.salary || data.salary_candidates.filter(s => s.indexOf(',') > -1)[0]);
         this.tax_status = new Input(data.tax_status);
         this.deadline = new Input(data.deadline);
         this.url = new Input(data.url);
+
+        this.job_title_candidates = data.job_title_candidates;
+        this.salary_candidates = data.salary_candidates;
     }
 
     get document() {
@@ -187,6 +197,7 @@ class JobMetadataData {
             contest_sector: this.contest_sector.value,
             scientific_sector: this.scientific_sector.value,
             job_title: this.job_title.value,
+            job_title_alt: this.job_title.value !== null ? this.spreadOverLocales({ content: '' }) : this.job_title_alt.value,
             salary: this.salary.value,
             tax_status: this.tax_status.value,
             deadline: this.deadline.value,
@@ -197,13 +208,24 @@ class JobMetadataData {
     validate() {
         let valid = true;
 
-        if (Object.entries(this.job_title.value).some(e => e[1].content === '')) {
+        if (this.job_title.value === null && Object.entries(this.job_title_alt.value).every(e => e[1].content === '')) {
             this.job_title.validity = 'invalid';
-            this.job_title.invalidFeedback = ['Missing translations'];
+            this.job_title_alt.validity = 'invalid';
+            this.job_title.invalidFeedback = ['Either one of these is required'];
             valid = false;
         } else {
             this.job_title.validity = 'valid';
+            this.job_title_alt.validity = 'valid';
             this.job_title.invalidFeedback = [];
+        }
+
+        if (Object.entries(this.job_title_alt.value).some(e => e[1].content === '')) {
+            this.job_title_alt.validity = 'invalid';
+            this.job_title_alt.invalidFeedback = [...this.job_title.invalidFeedback, 'Missing translations'];
+            valid = false;
+        } else {
+            this.job_title_alt.validity = 'valid';
+            this.job_title_alt.invalidFeedback = [];
         }
 
         if (this.salary.value !== '' && this.tax_status.value === null) {
@@ -258,8 +280,9 @@ export default {
                 published: false,
                 contest_sector: [],
                 scientific_sector: [],
-                job_title: this.spreadOverLocales({ content: '' }),
-                salary: '',
+                job_title: null,
+                job_title_alt: this.spreadOverLocales({ content: '' }),
+                salary: null,
                 tax_status: null,
                 deadline: new Date(),
                 url: this.spreadOverLocales({ content: '' })
@@ -280,6 +303,7 @@ export default {
             contest_sector_input_tag: '',
             contest_sector_input_tags: [],
             contest_sector_validation: [{
+                classes: 'not-allowed',
                 rule: new RegExp(`${contest_sectors_data.join('|')}`)
             }],
 
@@ -287,8 +311,17 @@ export default {
             scientific_sector_input_tag: '',
             scientific_sector_input_tags: [],
             scientific_sector_validation: [{
+                classes: 'not-allowed',
                 rule: new RegExp(`${scientific_sectors_data.join('|')}`)
-            }]
+            }],
+
+            job_title_options: [
+                { value: null, text: '' },
+                { value: 'ricercatore-tipo-a', text: this.$t('content_meta.ricercatore-tipo-a') },
+                { value: 'ricercatore-tipo-b', text: this.$t('content_meta.ricercatore-tipo-b') },
+                { value: 'professore-prima-fascia', text: this.$t('content_meta.professore-prima-fascia') },
+                { value: 'professore-seconda-fascia', text: this.$t('content_meta.professore-seconda-fascia') }
+            ]
         };
     },
     watch: {

@@ -97,7 +97,7 @@ let axiosObject = axios.create({
 axiosObject.interceptors.request.use(function(config) {
     config.headers['Content-Type'] = 'application/json';
     config.headers.common['Accept'] = [
-        'appplication/json',
+        'application/json',
         'application/vnd.unijobs.it.api.v1'
     ];
     const t = localStorage.getItem('unijobs_magic_token');
@@ -107,6 +107,20 @@ axiosObject.interceptors.request.use(function(config) {
     return config;
 });
 Vue.prototype.$axios = axiosObject;
+
+let couchdbAxios = axios.create({
+    baseURL: process.env.VUE_APP_COUCHDB_URL || 'http://localhost:5984/scrappa',
+    withCredentials: true
+});
+couchdbAxios.interceptors.request.use(function(config) {
+    config.headers['Content-Type'] = 'application/json';
+    config.headers.common['Accept'] = [
+        'application/json'
+    ];
+    config.headers.Authorization = `Basic ${process.env.VUE_APP_COUCHDB_TOKEN || 'YWRtaW46cGFzc3dvcmQ='}`;
+    return config;
+});
+Vue.prototype.$couchdb = couchdbAxios;
 
 Vue.filter('titleCase', function(value) {
     if (!value) return '';
@@ -121,12 +135,13 @@ const routes = [
     { path: "/login", component: Login },
     {
         path: "/",
-component: MainContainer,
-redirect: '/dashboard',
+        component: MainContainer,
+        redirect: '/dashboard',
         children: [
             { path: "dashboard", component: Dashboard },
             { path: "contents", component: ContentsList },
             { path: "contents/:content_type/new", component: ContentEditor, props: route => ({ id: "new", content_type: route.params['content_type'] }) },
+            { path: "contents/job/import/:import_id", component: ContentEditor, props: route => ({ id: "new", content_type: 'job', import_id: route.params['import_id'] }) },
             { path: "contents/:id/edit", component: ContentEditor, props: true }
         ]
     },
