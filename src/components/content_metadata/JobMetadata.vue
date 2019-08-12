@@ -10,7 +10,7 @@
             <div class="px-3 pb-3">
                 <b-select v-model="metadata.job_title.value" :options="job_title_options" class="mt-3"></b-select>
 
-                <div v-if="metadata.job_title.value === null">
+                <div v-if="!metadata.job_title.value">
                     <b-input-group v-for="l in availableLocales()" :key="l.name" class="mt-3">
                         <b-input-group-text slot="prepend" class="text-monospace">
                             <small>{{ l.code }}</small>
@@ -94,7 +94,13 @@
                 <h6 class="m-0">{{ $t('content_meta.organization') }}</h6>
             </template>
 
-            <OrganizationsPicker v-model="thisOrganization" />
+            <OrganizationsPicker :key="orgPickerKey" v-model="thisOrganization" />
+
+            <div v-if="metadata.organization_candidate">
+                <p><fa :icon="['fas', 'exclamation-circle']" class="text-danger" size="sm" /> {{ $t('content_meta.organization_candidate.not_found') }}</p>
+                <p><strong>{{ metadata.organization_candidate.parent_short_name }} &raquo; {{ metadata.organization_candidate.name }}</strong> ({{ metadata.organization_candidate.short_name }})</p>
+                <b-button variant="primary" @click="createOrganization">{{ $t('content_meta.organization_candidate.create') }}</b-button>
+            </div>
 
             <ul v-show="organization.invalidFeedback.length > 0" class="invalid_feedback">
                 <li v-for="(v, k) in organization.invalidFeedback" :key="k">{{ v }}</li>
@@ -112,6 +118,8 @@
                             :config="deadlinePickerOptions"
                 />
             </b-input-group>
+
+            <p class="mt-3"><fa :icon="['fas', 'exclamation-circle']" class="text-warning mr-1" size="sm" /> {{ $t('content_meta.application_deadline_timezone') }}</p>
 
             <ul v-show="metadata.deadline.invalidFeedback.length > 0" class="invalid_feedback">
                 <li v-for="(v, k) in metadata.deadline.invalidFeedback" :key="k">{{ v }}</li>
@@ -189,6 +197,7 @@ class JobMetadataData {
 
         this.job_title_candidates = data.job_title_candidates;
         this.salary_candidates = data.salary_candidates;
+        this.organization_candidate = data.organization_candidate;
     }
 
     get document() {
@@ -197,7 +206,7 @@ class JobMetadataData {
             contest_sector: this.contest_sector.value,
             scientific_sector: this.scientific_sector.value,
             job_title: this.job_title.value,
-            job_title_alt: this.job_title.value !== null ? this.spreadOverLocales({ content: '' }) : this.job_title_alt.value,
+            job_title_alt: this.job_title.value !== null ? void 0 : this.job_title_alt.value,
             salary: this.salary.value,
             tax_status: this.tax_status.value,
             deadline: this.deadline.value,
@@ -288,6 +297,7 @@ export default {
                 url: this.spreadOverLocales({ content: '' })
             }, this.value)),
             thisOrganization: _cloneDeep(this.organization),
+            orgPickerKey: 0,
 
             deadlinePickerOptions: {
                 dateFormat: 'Z',
@@ -340,6 +350,41 @@ export default {
     methods: {
         validate() {
             return this.metadata.validate();
+        },
+        async createOrganization() {
+            const parentResponse = await this.$axios.get(`/api/organizations?q=${this.metadata.organization_candidate.parent_short_name}`)
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.organization_candidate_parent_fetch_fail')}<br/>${error}`
+                    });
+                });
+            const parent = parentResponse.data.filter(o => o.short_name.toLowerCase() === this.metadata.organization_candidate.parent_short_name.toLowerCase())[0];
+            if (!parent) {
+                this.$root.$emit("global-notification", {
+                    type: "danger",
+                    message: `${this.$t('content_editor.organization_candidate_parent_fail')}`
+                });
+                return;
+            }
+            const newOrg = {
+                parent_id: parent.id,
+                name: this.metadata.organization_candidate.name,
+                short_name: this.metadata.organization_candidate.short_name
+            };
+            this.$axios.post(`/api/organizations`, { data: newOrg })
+                .then(response => {
+                    this.thisOrganization = Object.assign({}, this.thisOrganization, { value: response.data });
+                    this.metadata.organization_candidate = null;
+                    // This key-changing forced update is nasty and should not be necessary, but it is :(
+                    this.orgPickerKey += 1;
+                })
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.organization_candidate_parent_post_fail')}<br/>${error}`
+                    });
+                });
         }
     }
 };

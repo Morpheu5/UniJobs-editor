@@ -71,11 +71,19 @@ export default {
         salary_gross: 'Gross',
         salary_tax_exempt: 'Tax Exempt',
         application_deadline: 'Application deadline',
+        application_deadline_timezone: "The time is shown in your browser's timezone, not Rome's",
         application_url: 'Application URL',
         application_url_placeholder: 'https://…',
         'ricercatore-tipo-a': 'Researcher (type A)',
         'ricercatore-tipo-b': 'Senior Researcher (type B)',
         'professore-prima-fascia': 'Professor',
-        'professore-seconda-fascia': 'Associate Professor'
+        'professore-seconda-fascia': 'Associate Professor',
+        organization_candidate: {
+            not_found: 'The following organization is not in our database:',
+            part_of: 'Part of',
+            name: 'Name',
+            short_name: 'Short name',
+            create: 'Create organization'
+        }
     }
 };

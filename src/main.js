@@ -59,6 +59,7 @@ import { faCalendarAlt } from '@fortawesome/free-regular-svg-icons/faCalendarAlt
 import { faTimesCircle } from '@fortawesome/free-regular-svg-icons/faTimesCircle';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
 
 library.add(
     faTrashAlt, faEdit, faUndo,
@@ -67,7 +68,8 @@ library.add(
     faSearch, faFilter,
     faEye, faEyeSlash,
     faClock, faArrowUp, faArrowDown, faChevronLeft, faChevronRight, faCalendarAlt, faTimesCircle,
-    faTimes, faPlus
+    faTimes, faPlus,
+    faExclamationCircle
 );
 
 Vue.config.productionTip = false;

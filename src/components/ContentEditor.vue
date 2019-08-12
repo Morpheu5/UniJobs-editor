@@ -298,7 +298,6 @@ export default {
                     });
                 });
             const docData = documentResponse.data;
-            docData.organization_short_name = 'DEI';
             const organizationResponse = await this.$axios
                 .get(`/api/organizations?q=${docData.organization_id}%20${docData.organization_short_name}`)
                 .catch(error => {
@@ -307,31 +306,35 @@ export default {
                         message: `${this.$t('content_editor.organization_query_fail')}<br/>${error}`
                     });
                 });
+            const orgData = organizationResponse.data.filter(o => o.short_name === docData.organization_short_name)[0];
             let content = {
                 content_type: 'job',
                 title: docData.description,
+                organization: orgData || {},
                 metadata: {
                     job_title_candidates: docData.job_title,
                     salary_candidates: docData.salary.map(s => s.replace('.', '')),
                     tax_status: { lordo: 'gross', esentasse: 'tax-exempt', netto: 'net' }[docData.tax_status],
                     contest_sector: docData.contest_sector,
-                    scientific_sector: docData.scientific_sector
-                }
+                    scientific_sector: docData.scientific_sector,
+                    organization_candidate: orgData ? null : { parent_short_name: docData.organization_id, short_name: docData.organization_short_name, name: docData.organization_name },
+                    deadline: new Date(docData.deadline)
+                },
+                content_blocks: [
+                    {
+                        block_type: 'text',
+                        order: 1,
+                        body: {
+                            it: {
+                                content: `${docData.full_text}\n\n[Bando completo](${docData.pdf_url})`
+                            },
+                            en: {
+                                content: ''
+                            }
+                        }
+                    }
+                ]
             };
-            const orgData = organizationResponse.data.filter(o => o.short_name === docData.organization_short_name)[0];
-            if (orgData) {
-                const ancestorsResponse = await this.$axios
-                    .get(`/api/organizations/${orgData.id}/ancestors`)
-                    .catch(error => {
-                        this.$root.$emit("global-notification", {
-                            type: "danger",
-                            message: `${this.$t('content_editor.organization_ancestors_query_fail')}<br/>${error}`
-                        });
-                    });
-                content.organization = { ...orgData, ancestors: ancestorsResponse.data };
-            } else {
-                content.organization = {};
-            }
             return new Promise(function(resolve) {
                 resolve(content);
             });

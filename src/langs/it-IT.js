@@ -69,12 +69,20 @@ export default {
         salary_placeholder: 'es. 20000, 30000-40000…',
         salary_gross: 'Lordo',
         salary_tax_exempt: 'Esentasse',
-        application_deadline: 'Scadenza per fare domanda',
+        application_deadline: 'Scadenza',
+        application_deadline_timezone: "L'orario è mostrato nel fuso orario del browser, non di Roma.",
         application_url: 'URL per fare domanda',
         application_url_placeholder: 'https://…',
         'ricercatore-tipo-a': 'Ricercatore (tipo A)',
         'ricercatore-tipo-b': 'Ricercatore (tipo B)',
         'professore-prima-fascia': 'Professore Ordinario',
-        'professore-seconda-fascia': 'Professore Associato'
+        'professore-seconda-fascia': 'Professore Associato',
+        organization_candidate: {
+            not_found: 'Questa organizzazione non è presente nel nostro database:',
+            part_of: 'Parte di',
+            name: 'Nome',
+            short_name: 'Nome breve',
+            create: 'Aggiungi organizzazione'
+        }
     }
 };
