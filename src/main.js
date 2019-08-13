@@ -157,7 +157,7 @@ const routes = [
 
 const router = new VueRouter({
     base: process.env.VUE_APP_ROUTER_BASE || '/',
-    // mode: 'history',
+    mode: 'history',
     routes
 });
 router.beforeEach((to, from, next) => {

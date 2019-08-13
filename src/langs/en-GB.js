@@ -11,7 +11,8 @@ export default {
     },
     sidebar_menu: {
         dashboard: 'Dashboard',
-        contents: 'Your contents'
+        contents: 'Your contents',
+        scrapes: 'Import'
     },
     login_page: {
         email_address: 'E-mail address',

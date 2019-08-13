@@ -14,9 +14,9 @@
                         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
                         <b-collapse id="nav_collapse" is-nav>
                             <b-navbar-nav>
-                                <b-nav-item to="/dashboard"><fa :icon="['fas', 'tachometer-alt']" class="mr-1" />{{ $t('sidebar_menu.dashboard') }}</b-nav-item>
-                                <b-nav-item to="/contents"><fa :icon="['fas', 'folder']" class="mr-1" />{{ $t('sidebar_menu.contents') }}</b-nav-item>
-                                <b-nav-item to="/scrapes"><fa :icon="['fas', 'file-import']" class="mr-1" />{{ $t('sidebar_menu.scrapes') }}</b-nav-item>
+                                <b-nav-item to="/dashboard" class="mr-2"><fa :icon="['fas', 'tachometer-alt']" class="mr-1" /> {{ $t('sidebar_menu.dashboard') }}</b-nav-item>
+                                <b-nav-item to="/contents" class="mr-2"><fa :icon="['fas', 'folder']" class="mr-1" /> {{ $t('sidebar_menu.contents') }}</b-nav-item>
+                                <b-nav-item to="/scrapes" class="mr-2"><fa :icon="['fas', 'file-import']" class="mr-1" /> {{ $t('sidebar_menu.scrapes') }}</b-nav-item>
                             </b-navbar-nav>
 
                             <b-navbar-nav class="ml-auto">
@@ -42,6 +42,20 @@
         </b-container>
     </div>
 </template>
+
+<style lang="scss">
+@import '~bootstrap/scss/bootstrap';
+
+.nav-link {
+    color: white !important;
+
+    &.router-link-exact-active {
+        background: white;
+        color: theme-color('primary') !important;
+        border-radius: 6px;
+    }
+}
+</style>
 
 <script>
 import GlobalNotifications from './GlobalNotifications';
