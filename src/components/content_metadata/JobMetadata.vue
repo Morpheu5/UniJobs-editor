@@ -185,16 +185,17 @@ import scientific_sectors_data from '@/assets/scientific_sectors.json';
 
 class JobMetadataData {
     constructor(data) {
-        this.published = new Input(data.published);
-        this.contest_sector = new Input(data.contest_sector);
-        this.scientific_sector = new Input(data.scientific_sector);
-        this.job_title = new Input(data.job_title || data.job_title_candidates[0]);
+        this.published = new Input(data.published || false);
+        this.contest_sector = new Input(data.contest_sector || []);
+        this.scientific_sector = new Input(data.scientific_sector || []);
+        this.job_title = new Input(data.job_title || (data.job_title_candidates && Array.isArray(data.job_title_candidates) && data.job_title_candidates[0]) || '');
         this.job_title_alt = new Input(data.job_title_alt || this.spreadOverLocales({ content: '' }));
-        this.salary = new Input(data.salary || data.salary_candidates.filter(s => s.indexOf(',') > -1)[0]);
-        this.tax_status = new Input(data.tax_status);
-        this.deadline = new Input(data.deadline);
-        this.url = new Input(data.url);
+        this.salary = new Input(data.salary || (data.salary_candidates && Array.isArray(data.salary_candidates) && data.salary_candidates.filter(s => s.indexOf(',') > -1)[0]) || '');
+        this.tax_status = new Input(data.tax_status || '');
+        this.deadline = new Input(data.deadline || new Date());
+        this.url = new Input(data.url || '');
 
+        this.import_type = data.import_type;
         this.job_title_candidates = data.job_title_candidates;
         this.salary_candidates = data.salary_candidates;
         this.organization_candidate = data.organization_candidate;
@@ -210,7 +211,8 @@ class JobMetadataData {
             salary: this.salary.value,
             tax_status: this.tax_status.value,
             deadline: this.deadline.value,
-            url: this.url.value
+            url: this.url.value,
+            import_type: this.import_type
         };
     }
 

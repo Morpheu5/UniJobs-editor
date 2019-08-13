@@ -32,6 +32,7 @@ import Dashboard from "@/components/Dashboard.vue";
 import MainContainer from "@/components/MainContainer.vue";
 import ContentsList from "@/components/ContentsList.vue";
 import ContentEditor from "@/components/ContentEditor.vue";
+import ScrapeList from "@/components/ScrapeList.vue";
 
 import NotFoundComponent from "@/components/NotFoundComponent.vue";
 
@@ -60,6 +61,7 @@ import { faTimesCircle } from '@fortawesome/free-regular-svg-icons/faTimesCircle
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons/faExclamationCircle';
+import { faFileImport } from '@fortawesome/free-solid-svg-icons/faFileImport';
 
 library.add(
     faTrashAlt, faEdit, faUndo,
@@ -69,7 +71,8 @@ library.add(
     faEye, faEyeSlash,
     faClock, faArrowUp, faArrowDown, faChevronLeft, faChevronRight, faCalendarAlt, faTimesCircle,
     faTimes, faPlus,
-    faExclamationCircle
+    faExclamationCircle,
+    faFileImport
 );
 
 Vue.config.productionTip = false;
@@ -144,7 +147,8 @@ const routes = [
             { path: "contents", component: ContentsList },
             { path: "contents/:content_type/new", component: ContentEditor, props: route => ({ id: "new", content_type: route.params['content_type'] }) },
             { path: "contents/job/import/:import_id", component: ContentEditor, props: route => ({ id: "new", content_type: 'job', import_id: route.params['import_id'] }) },
-            { path: "contents/:id/edit", component: ContentEditor, props: true }
+            { path: "contents/:id/edit", component: ContentEditor, props: true },
+            { path: "scrapes", component: ScrapeList }
         ]
     },
 

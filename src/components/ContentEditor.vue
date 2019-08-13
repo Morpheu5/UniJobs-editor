@@ -234,6 +234,7 @@ export default {
             this.fetchImport()
                 .then(contentArgs => {
                     if (contentArgs) {
+                        contentArgs.metadata = { import_type: 'scraper', ...contentArgs.metadata };
                         this.content = new Content(_cloneDeep(contentArgs));
                         this.referenceDocument = new Content(_cloneDeep(contentArgs));
                     }

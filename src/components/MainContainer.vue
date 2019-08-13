@@ -16,6 +16,7 @@
                             <b-navbar-nav>
                                 <b-nav-item to="/dashboard"><fa :icon="['fas', 'tachometer-alt']" class="mr-1" />{{ $t('sidebar_menu.dashboard') }}</b-nav-item>
                                 <b-nav-item to="/contents"><fa :icon="['fas', 'folder']" class="mr-1" />{{ $t('sidebar_menu.contents') }}</b-nav-item>
+                                <b-nav-item to="/scrapes"><fa :icon="['fas', 'file-import']" class="mr-1" />{{ $t('sidebar_menu.scrapes') }}</b-nav-item>
                             </b-navbar-nav>
 
                             <b-navbar-nav class="ml-auto">
