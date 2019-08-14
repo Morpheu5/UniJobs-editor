@@ -9,6 +9,7 @@
                 <fa v-if="data.value" :icon="['far', 'check-square']" size="lg" />
                 <fa v-else :icon="['far', 'square']" size="lg" />
             </template>
+            <router-link slot="content_id" slot-scope="data" :to="`/contents/${data.value}/edit`">{{ data.value }}</router-link>
             <template slot="org" slot-scope="data">{{ data.value[0] }} &raquo; {{ data.value[1] }}</template>
             <router-link slot="description" slot-scope="data" :to="`/contents/job/import/${data.item.id}`">{{ data.value }}</router-link>
             <template slot="deadline" slot-scope="data">{{ data.value | deadline }}</template>
@@ -35,6 +36,7 @@ export default Vue.extend({
             fields: [
                 { key: 'analyzed', label: 'A' },
                 { key: 'smelly', label: 'Sm' },
+                { key: 'content_id', label: 'C' },
                 { key: 'org', label: 'Org' },
                 'description',
                 { key: 'deadline', sortable: true }
@@ -52,13 +54,19 @@ export default Vue.extend({
                 description: _truncate(job.description.it, { length: 140, separator: ' ' }),
                 deadline: job.deadline,
                 analyzed: job.analyzed,
-                smelly: job.smelly
+                smelly: job.smelly,
+                imported: job.imported,
+                content_id: job.content_id
             }));
         }
     },
 
     async created() {
-        const { docs, bookmark } = await this.$couchdb.post('/_find', { selector: {}, fields: ['_id', '_rev', 'description', 'organization_id', 'organization_short_name', 'deadline', 'scraped', 'analyzed', 'smelly', 'imported', 'imported_id'] })
+        const query = {
+            selector: {},
+            fields: ['_id', '_rev', 'description', 'organization_id', 'organization_short_name', 'deadline', 'scraped', 'analyzed', 'smelly', 'imported', 'content_id']
+        };
+        const { docs, bookmark } = await this.$couchdb.post('/_find', query)
             .then(res => {
                 return { docs: res.data.docs, bookmark: res.data.bookmark };
             })

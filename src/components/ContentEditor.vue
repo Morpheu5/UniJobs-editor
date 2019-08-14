@@ -200,7 +200,8 @@ export default {
         return {
             content: null,
             referenceDocument: null,
-            documentDirty: false
+            documentDirty: false,
+            importedDocument: null
         };
     },
     watch: {
@@ -298,6 +299,7 @@ export default {
                     });
                 });
             const docData = documentResponse.data;
+            this.importedDocument = docData;
             const organizationResponse = await this.$axios
                 .get(`/api/organizations?q=${docData.organization_id}%20${docData.organization_short_name}`)
                 .catch(error => {
@@ -368,8 +370,12 @@ export default {
                 // Create (POST)
                 this.$axios
                     .post('/api/contents', contentParams)
-                    .then(response => {
+                    .then(async response => {
                         // Content created!
+                        this.importedDocument.imported = true;
+                        this.importedDocument.content_id = response.data.id;
+                        const res = await this.$couchdb.put(`/${this.importedDocument._id}`, this.importedDocument);
+                        console.log(res);
                         this.$router.push({ path: `/contents/${response.data.id}/edit` });
                         this.$router.go();
                     }).catch(error => {

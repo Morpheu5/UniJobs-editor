@@ -235,7 +235,7 @@ class JobMetadataData {
             this.job_title.invalidFeedback = [];
         }
 
-        if (Object.entries(this.job_title_alt.value).some(e => e[1].content === '')) {
+        if ((this.job_title.value === null || this.job_title.value === '') && Object.entries(this.job_title_alt.value).some(e => e[1].content === '')) {
             this.job_title_alt.validity = 'invalid';
             this.job_title_alt.invalidFeedback = ['Missing translations'];
             valid = false;
