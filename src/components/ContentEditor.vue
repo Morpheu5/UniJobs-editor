@@ -164,7 +164,6 @@ class Content {
             this.title.validity = 'valid';
             this.title.invalidFeedback = [];
         }
-
         if (!this.organization.value.id) {
             this.organization.validity = 'invalid';
             this.organization.invalidFeedback = ['Required field.'];
@@ -319,7 +318,7 @@ export default {
                     contest_sector: docData.contest_sector,
                     scientific_sector: docData.scientific_sector,
                     organization_candidate: orgData ? null : { parent_short_name: docData.organization_id, short_name: docData.organization_short_name, name: docData.organization_name },
-                    deadline: new Date(docData.deadline)
+                    deadline: docData.deadline
                 },
                 content_blocks: [
                     {
@@ -344,7 +343,6 @@ export default {
         validate() {
             const validatable = this.$children.filter(e => e.$el.classList && e.$el.classList.contains('validatable'));
             const childrenValidity = validatable.map(e => e.validate()).reduce((a, e) => a && e);
-
             return this.content.validate() && childrenValidity;
         },
 

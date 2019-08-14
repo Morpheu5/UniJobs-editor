@@ -43,7 +43,7 @@
     </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~bootstrap/scss/bootstrap';
 
 .nav-link {

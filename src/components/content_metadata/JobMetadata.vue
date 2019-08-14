@@ -2,7 +2,7 @@
     <div>
         <b-form-checkbox id="published" v-model="metadata.published.value">{{ $t('content_meta.published') }}</b-form-checkbox>
 
-        <b-card :class="metadata.job_title.validity" no-body class="mt-3 field_container">
+        <b-card :class="metadata.job_title.validity && metadata.job_title_alt.validity" no-body class="mt-3 field_container">
             <template slot="header">
                 <h6 class="m-0">{{ $t('content_meta.job_title') }}</h6>
             </template>
@@ -22,6 +22,9 @@
 
                 <ul v-show="metadata.job_title.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
                     <li v-for="(v, k) in metadata.job_title.invalidFeedback" :key="k" @click={}>{{ v }}</li>
+                </ul>
+                <ul v-show="metadata.job_title_alt.invalidFeedback.length > 0" class="invalid_feedback mt-3 mb-0">
+                    <li v-for="(v, k) in metadata.job_title_alt.invalidFeedback" :key="k" @click={}>{{ v }}</li>
                 </ul>
             </div>
         </b-card>
@@ -180,6 +183,8 @@ import Input from '../Input.js';
 import OrganizationsPicker from '@/components/content_metadata/OrganizationsPicker';
 import VueTagsInput from '@johmun/vue-tags-input';
 
+import moment from 'moment-timezone';
+
 import contest_sectors_data from '@/assets/contest_sectors.json';
 import scientific_sectors_data from '@/assets/scientific_sectors.json';
 
@@ -219,7 +224,7 @@ class JobMetadataData {
     validate() {
         let valid = true;
 
-        if (this.job_title.value === null && Object.entries(this.job_title_alt.value).every(e => e[1].content === '')) {
+        if ((this.job_title.value === null || this.job_title.value === '') && Object.entries(this.job_title_alt.value).every(e => e[1].content === '')) {
             this.job_title.validity = 'invalid';
             this.job_title_alt.validity = 'invalid';
             this.job_title.invalidFeedback = ['Either one of these is required'];
@@ -232,7 +237,7 @@ class JobMetadataData {
 
         if (Object.entries(this.job_title_alt.value).some(e => e[1].content === '')) {
             this.job_title_alt.validity = 'invalid';
-            this.job_title_alt.invalidFeedback = [...this.job_title.invalidFeedback, 'Missing translations'];
+            this.job_title_alt.invalidFeedback = ['Missing translations'];
             valid = false;
         } else {
             this.job_title_alt.validity = 'valid';
@@ -295,7 +300,7 @@ export default {
                 job_title_alt: this.spreadOverLocales({ content: '' }),
                 salary: null,
                 tax_status: null,
-                deadline: new Date(),
+                deadline: moment().tz('Europe/Rome').format(),
                 url: this.spreadOverLocales({ content: '' })
             }, this.value)),
             thisOrganization: _cloneDeep(this.organization),
