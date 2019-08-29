@@ -49,6 +49,11 @@ export default {
             <p>Hai considerato l'alternativa? Potresti impostare il contenuto come <strong>non pubblicato</strong>.</p>
             <p class="my-4 text-danger"><strong>Confermi di voler cancellare questo contenuto?</strong></p>
         `,
+        delete_scrape_modal: `
+            <p><strong>Questa azione è permanente</strong>.</p>
+            <p>Se confermi, <strong>non sarà possibile</strong> recuperare l'importazione cancellata.</p>
+            <p class="my-4 text-danger"><strong>Confermi di voler cancellare questa importazione?</strong></p>
+        `,
         delete_content_success: 'Contenuto cancellato correttamente.',
         delete_content_fail: `C'è stato un problema nel cancellare questo contenuto.`,
         save_content_success: 'Contenuto salvato correttamente.',

@@ -13,7 +13,14 @@
             <template slot="org" slot-scope="data">{{ data.value[0] }} &raquo; {{ data.value[1] }}</template>
             <router-link slot="description" slot-scope="data" :to="`/contents/job/import/${data.item.id}`">{{ data.value }}</router-link>
             <template slot="deadline" slot-scope="data">{{ data.value | deadline }}</template>
+            <b-btn slot="delete" slot-scope="data" v-b-modal.deleteScrapeModal variant="danger" @click="toBeDeleted = [data.item]">
+                <fa :icon="['far', 'trash-alt']" size="sm" />
+            </b-btn>
         </b-table>
+
+        <b-modal id="deleteScrapeModal" :title="$t('content_editor.delete_modal_title')" :ok-title="$t('yes')" :cancel-title="$t('no')" ok-variant="danger" header-text-variant="danger" @ok="deleteScrape" @cancel="toBeDeleted = []">
+            <div v-html="$t('content_editor.delete_scrape_modal')" />
+        </b-modal>
     </div>
 </template>
 
@@ -37,11 +44,13 @@ export default Vue.extend({
                 { key: 'analyzed', label: 'A' },
                 { key: 'smelly', label: 'Sm' },
                 { key: 'content_id', label: 'C' },
+                'delete',
                 { key: 'org', label: 'Org' },
                 'description',
                 { key: 'deadline', sortable: true }
             ],
-            bookmark: ''
+            bookmark: '',
+            toBeDeleted: []
         };
     },
 
@@ -51,7 +60,7 @@ export default Vue.extend({
                 id: job._id,
                 rev: job._rev,
                 org: [ job.organization_id, job.organization_short_name ],
-                description: _truncate(job.description.it, { length: 140, separator: ' ' }),
+                description: _truncate(job.description.it, { length: 100, separator: ' ' }),
                 deadline: job.deadline,
                 analyzed: job.analyzed,
                 smelly: job.smelly,
@@ -75,6 +84,30 @@ export default Vue.extend({
             });
         this.scraps = docs;
         this.bookmark = bookmark;
+    },
+
+    methods: {
+        deleteScrape() {
+            const deleteRequests = this.toBeDeleted.map(item => this.$couchdb.delete(`${item.id}`, { params: { rev: item.rev } }));
+
+            Promise.all(deleteRequests)
+                .then(_responses => {
+                    this.$root.$emit("global-notification", {
+                        type: "success",
+                        message: this.$t('content_editor.delete_content_success')
+                    });
+                    this.scraps = this.scraps.filter(scrap => !this.toBeDeleted.find((e) => e.id === scrap._id));
+                })
+                .catch(errors => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.delete_content_fail')}<br/>${errors}`
+                    });
+                })
+                .finally(() => {
+                    this.toBeDeleted = [];
+                });
+        }
     }
 });
 </script>

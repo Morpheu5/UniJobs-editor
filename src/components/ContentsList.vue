@@ -204,7 +204,6 @@ export default {
                         type: "success",
                         message: this.$t('content_editor.delete_content_success')
                     });
-                    console.log(this.toBeDeleted);
                     this.contents = this.contents.filter(content => !this.toBeDeleted.includes(content.id));
                 })
                 .catch(errors => {

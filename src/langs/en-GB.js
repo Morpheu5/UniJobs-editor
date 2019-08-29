@@ -50,6 +50,11 @@ export default {
             <p>Have you considered the alternative? You could <strong>unpublish</strong> this content instead.</p>
             <p class="my-4 text-danger"><strong>Are you sure you want to delete this content?</strong></p>
         `,
+        delete_scrape_modal: `
+            <p><strong>This action is permanent</strong>.</p>
+            <p>If you confirm, you <strong>will not</strong> be able to recover the scraped content.</p>
+            <p class="my-4 text-danger"><strong>Are you sure you want to delete this scrape?</strong></p>
+        `,
         delete_content_success: 'Content deleted succesfully.',
         delete_content_fail: 'Something went wrong while deleting content.',
         save_content_success: 'Content saved correctly.',
