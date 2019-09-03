@@ -16,12 +16,6 @@
     </b-col>
 </template>
 
-<style lang="scss">
-.vue-simplemde .CodeMirror {
-    max-height: 300px;
-}
-</style>
-
 <script>
 import Input from '../Input';
 import _merge from 'lodash/merge';
