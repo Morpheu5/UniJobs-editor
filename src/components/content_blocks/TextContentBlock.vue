@@ -6,7 +6,7 @@
                     <template slot="title">
                         {{ l.name }} <span v-show="!block_data.value.body[l.code] || block_data.value.body[l.code] == ''" class="missing">(missing)</span>
                     </template>
-                    <markdown-editor v-model="block_data.value.body[l.code].content" :disabled="value.delete" :configs="mdeConfig" />
+                    <vue-simplemde v-model="block_data.value.body[l.code].content" :disabled="value.delete" :configs="mdeConfig" />
                 </b-tab>
             </b-tabs>
             <ul v-show="block_data.invalidFeedback" class="invalid_feedback">
@@ -15,6 +15,12 @@
         </b-card>
     </b-col>
 </template>
+
+<style lang="scss">
+.vue-simplemde .CodeMirror {
+    max-height: 300px;
+}
+</style>
 
 <script>
 import Input from '../Input';
@@ -39,6 +45,7 @@ export default {
                 body: this.spreadOverLocales({ content: '' })
             }, this.value)),
             mdeConfig: {
+                forceSync: true,
                 spellChecker: false,
                 status: false,
                 toolbar: ['bold', 'italic', 'quote', 'unordered-list', 'ordered-list', 'clean-block', 'guide']

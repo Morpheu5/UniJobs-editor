@@ -333,7 +333,8 @@ export default {
                             en: {
                                 content: ''
                             }
-                        }
+                        },
+                        uuid: uuidv4()
                     }
                 ]
             };
