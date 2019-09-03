@@ -26,6 +26,11 @@
                 {{ $t('content_meta.no_organizations_found') }}
             </div>
         </div>
+        <div v-if="thisCandidate && Object.keys(thisCandidate).length > 0">
+            <p><fa :icon="['fas', 'exclamation-circle']" class="text-danger" size="sm" /> {{ $t('content_meta.organization_candidate.not_found') }}</p>
+            <p><strong>{{ thisCandidate.parent_short_name }} &raquo; {{ thisCandidate.name }}</strong> ({{ thisCandidate.short_name }})</p>
+            <b-button variant="primary" @click="createOrganization">{{ $t('content_meta.organization_candidate.create') }}</b-button>
+        </div>
     </div>
 </template>
 
@@ -45,11 +50,16 @@ export default {
         value: {
             type: Object,
             required: true
+        },
+        candidate: {
+            type: Object,
+            required: false
         }
     },
     data() {
         return {
             thisOrganization: _cloneDeep(this.value.value),
+            thisCandidate: Object.assign({}, this.candidate),
 
             organizationSearchQuery: '',
             organizationSearchQueryDirty: false,
@@ -104,6 +114,42 @@ export default {
         flattenForest(forest) {
             return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
                          .map(t => ({ organization_id: t[t.length - 1].id, ancestors: t }));
+        },
+        async createOrganization() {
+            const parentResponse = await this.$axios.get(`/api/organizations?q=${this.thisCandidate.parent_short_name}`)
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.organization_candidate_parent_fetch_fail')}<br/>${error}`
+                    });
+                });
+            const parent = parentResponse.data.filter(o => o.short_name.toLowerCase() === this.thisCandidate.parent_short_name.toLowerCase())[0];
+            if (!parent) {
+                this.$root.$emit("global-notification", {
+                    type: "danger",
+                    message: `${this.$t('content_editor.organization_candidate_parent_fail')}`
+                });
+                return;
+            }
+            const newOrg = {
+                parent_id: parent.id,
+                name: this.thisCandidate.name,
+                short_name: this.thisCandidate.short_name
+            };
+            this.$axios.post(`/api/organizations`, { data: newOrg })
+                .then(response => {
+                    // debugger;
+                    this.thisOrganization = response.data;
+                    this.thisCandidate = null;
+                    // This key-changing forced update is nasty and should not be necessary, but it is :(
+                    // this.orgPickerKey += 1;
+                })
+                .catch(error => {
+                    this.$root.$emit("global-notification", {
+                        type: "danger",
+                        message: `${this.$t('content_editor.organization_candidate_parent_post_fail')}<br/>${error}`
+                    });
+                });
         }
     }
 };
