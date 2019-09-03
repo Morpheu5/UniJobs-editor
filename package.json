@@ -23,7 +23,7 @@
     "vue-flatpickr-component": "^8.1.2",
     "vue-i18n": "^8.11.2",
     "vue-router": "^3.0.3",
-    "vue-simplemde": "^0.5.2",
+    "vue-simplemde": "^1.0.0",
     "vuex": "^3.0.1",
     "vuex-persistedstate": "^2.5.4"
   },

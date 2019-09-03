@@ -87,7 +87,7 @@ for (const component of bootstrapComponents) {
 Vue.use(VueRouter);
 Vue.use(VueI18n);
 Vue.use(flatPickr);
-Vue.use(VueSimplemde);
+Vue.component('vue-simplemde', VueSimplemde);
 
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);
