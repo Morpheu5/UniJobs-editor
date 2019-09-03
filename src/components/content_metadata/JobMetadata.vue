@@ -38,7 +38,7 @@
                 <vue-tags-input
                     v-model="contest_sector_input_tag"
                     :add-on-key="[13, ',', ';']"
-                    :autocomplete-items="contest_sector_valid_tags.map( text => ({ text }))"
+                    :autocomplete-items="filtered_contest_sector_valid_tags.map( text => ({ text }))"
                     :placeholder="$t('content_meta.contest_sector_placeholder')"
                     :tags="metadata.contest_sector.value.map( text => ({ text }) )"
                     :validation="contest_sector_validation"
@@ -60,7 +60,7 @@
                 <vue-tags-input
                     v-model="scientific_sector_input_tag"
                     :add-on-key="[13, ',', ';']"
-                    :autocomplete-items="scientific_sector_valid_tags.map( text => ({ text }))"
+                    :autocomplete-items="filtered_scientific_sector_valid_tags.map( text => ({ text }))"
                     :placeholder="$t('content_meta.scientific_sector_placeholder')"
                     :tags="metadata.scientific_sector.value.map( text => ({ text }) )"
                     :validation="scientific_sector_validation"
@@ -333,6 +333,14 @@ export default {
                 { value: 'professore-seconda-fascia', text: this.$t('content_meta.professore-seconda-fascia') }
             ]
         };
+    },
+    computed: {
+        filtered_contest_sector_valid_tags() {
+            return this.contest_sector_valid_tags.filter(item => item.toLowerCase().indexOf(this.contest_sector_input_tag.toLowerCase()) !== -1);
+        },
+        filtered_scientific_sector_valid_tags() {
+            return this.scientific_sector_valid_tags.filter(item => item.toLowerCase().indexOf(this.scientific_sector_input_tag.toLowerCase()) !== -1);
+        }
     },
     watch: {
         metadata: {
