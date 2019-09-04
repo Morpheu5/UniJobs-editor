@@ -108,7 +108,7 @@ export default Vue.extend({
             toBeDeleted: [],
             currentPage: 1,
             totalRows: 0,
-            perPage: 3,
+            perPage: 10,
             filterCriteria: {
                 showExpired: false
             }
