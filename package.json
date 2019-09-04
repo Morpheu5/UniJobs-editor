@@ -1,6 +1,6 @@
 {
   "name": "editor",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": true,
   "scripts": {
     "dev": "PORT=8081 vue-cli-service serve",
