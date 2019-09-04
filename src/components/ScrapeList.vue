@@ -1,6 +1,12 @@
 <template>
     <div>
         <b-row>
+            <b-col>
+                <b-form inline>
+                    <b-checkbox v-model="filterCriteria.showExpired">Show expired</b-checkbox>
+                    <b-btn v-show="toBeDeleted.length > 0" v-b-modal.deleteScrapeModal class="ml-3" size="sm" variant="danger">Delete selected ({{ toBeDeleted.length }})</b-btn>
+                </b-form>
+            </b-col>
             <b-col cols="1">
                 <b-select v-model="perPage" size="sm">
                     <option value="10">10</option>
@@ -10,12 +16,12 @@
                     <option value="1000000">1000000</option>
                 </b-select>
             </b-col>
-            <b-col>
+            <b-col cols="3">
                 <b-pagination
                     v-model="currentPage"
-                    :total-rows="tableRows.length"
+                    :total-rows="totalRows"
                     :per-page="perPage"
-                    align="left"
+                    align="fill"
                     size="sm"
                     aria-controls="scraps_table"
                 ></b-pagination>
@@ -24,59 +30,54 @@
 
         <b-row>
             <b-col>
-                <b-table id="scraps_table" striped hover small sort-by="deadline" :items="tableRows" :fields="fields" :per-page="perPage" :current-page="currentPage">
+                <b-table
+                    id="scraps_table"
+                    hover
+                    selectable
+                    select-mode="range"
+                    striped
+                    small
+                    sort-by="deadline"
+                    :items="tableRows"
+                    :fields="fields"
+                    :filter="filterCriteria"
+                    :filter-function="tableFilter"
+                    :per-page="perPage"
+                    :current-page="currentPage"
+                    :tbody-tr-class="rowClass"
+                    @filtered="onFiltered"
+                    @row-selected="onSelected"
+                >
+                    <b-btn slot="delete" slot-scope="data" size="sm" variant="danger" @click="toBeDeleted = [data.item]">
+                        <fa :icon="['far', 'trash-alt']" size="sm" />
+                    </b-btn>
                     <template slot="analyzed" slot-scope="data">
-                        <fa v-if="data.value" :icon="['far', 'check-square']" size="lg" />
-                        <fa v-else :icon="['far', 'square']" size="lg" />
+                        <fa v-if="data.value" :icon="['far', 'check-square']" size="sm" />
+                        <fa v-else :icon="['far', 'square']" size="sm" />
                     </template>
                     <template slot="smelly" slot-scope="data">
-                        <fa v-if="data.value" :icon="['far', 'check-square']" size="lg" />
-                        <fa v-else :icon="['far', 'square']" size="lg" />
+                        <fa v-if="data.value" :icon="['far', 'check-square']" size="sm" />
+                        <fa v-else :icon="['far', 'square']" size="sm" />
                     </template>
                     <router-link slot="content_id" slot-scope="data" :to="`/contents/${data.value}/edit`">{{ data.value }}</router-link>
                     <template slot="org" slot-scope="data">{{ data.value[0] }} &raquo; {{ data.value[1] }}</template>
                     <router-link slot="description" slot-scope="data" :to="`/contents/job/import/${data.item.id}`">{{ data.value }}</router-link>
                     <template slot="deadline" slot-scope="data">{{ data.value | deadline }}</template>
-                    <b-btn slot="delete" slot-scope="data" v-b-modal.deleteScrapeModal variant="danger" @click="toBeDeleted = [data.item]">
-                        <fa :icon="['far', 'trash-alt']" size="sm" />
-                    </b-btn>
                 </b-table>
             </b-col>
         </b-row>
-
-        <b-row>
-            <b-col cols="1">
-                <b-select v-model="perPage" size="sm">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="1000000">1000000</option>
-                </b-select>
-            </b-col>
-            <b-col>
-                <b-pagination
-                    v-model="currentPage"
-                    :total-rows="tableRows.length"
-                    :per-page="perPage"
-                    align="left"
-                    size="sm"
-                    aria-controls="scraps_table"
-                ></b-pagination>
-            </b-col>
-        </b-row>
-
-        <!-- <b-select v-model="perPage">
-            <option>25</option>
-            <option>50</option>
-            <option value="1000">All</option>
-        </b-select> -->
 
         <b-modal id="deleteScrapeModal" :title="$t('content_editor.delete_modal_title')" :ok-title="$t('yes')" :cancel-title="$t('no')" ok-variant="danger" header-text-variant="danger" @ok="deleteScrape" @cancel="toBeDeleted = []">
             <div v-html="$t('content_editor.delete_scrape_modal')" />
         </b-modal>
     </div>
 </template>
+
+<style lang="scss">
+tr.expired {
+    opacity: 0.5;
+}
+</style>
 
 <script>
 import Vue from 'vue';
@@ -95,10 +96,10 @@ export default Vue.extend({
         return {
             scraps: [],
             fields: [
+                { key: 'delete', label: '' },
                 { key: 'analyzed', label: 'A' },
-                { key: 'smelly', label: 'Sm' },
+                { key: 'smelly', label: 'S' },
                 { key: 'content_id', label: 'C' },
-                'delete',
                 { key: 'org', label: 'Org' },
                 'description',
                 { key: 'deadline', sortable: true }
@@ -106,7 +107,11 @@ export default Vue.extend({
             bookmark: '',
             toBeDeleted: [],
             currentPage: 1,
-            perPage: 25
+            totalRows: 0,
+            perPage: 3,
+            filterCriteria: {
+                showExpired: false
+            }
         };
     },
 
@@ -151,6 +156,7 @@ export default Vue.extend({
             this.scraps = [...this.scraps, ...docs];
             this.bookmark = bookmark;
         }
+        this.totalRows = this.scraps.length;
     },
 
     methods: {
@@ -174,6 +180,24 @@ export default Vue.extend({
                 .finally(() => {
                     this.toBeDeleted = [];
                 });
+        },
+        rowClass(item, _type) {
+            let classes = [];
+            if (item) {
+                if (new Date(item.deadline) < new Date()) {
+                    classes.push('expired');
+                }
+            }
+            return classes.join(' ');
+        },
+        tableFilter(item, filter) {
+            return (new Date(item.deadline) >= new Date() || filter.showExpired);
+        },
+        onFiltered(filteredItems) {
+            this.totalRows = filteredItems.length;
+        },
+        onSelected(rows) {
+            this.toBeDeleted = rows;
         }
     }
 });
