@@ -11,7 +11,8 @@ export default new Vuex.Store({
     ],
     state: {
         user: null,
-        locale: 'it-IT'
+        locale: 'it-IT',
+        env: process.env.NODE_ENV || 'production'
     },
     mutations: {
         setUser(state, user) {

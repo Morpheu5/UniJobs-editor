@@ -1,5 +1,14 @@
 <template>
     <div id="content_editor">
+        <b-row v-if="content && id !== 'new'" class="mb-3 mt-0">
+            <b-col>
+                <b-btn
+                    :href="$store.state.env === 'production' ? `https://www.unijobs.it/jobs/${id}` : `http://localhost:8080/jobs/${id}`"
+                    size="sm"
+                    variant="primary"
+                >View on site</b-btn>
+            </b-col>
+        </b-row>
         <b-row v-if="content">
             <b-col>
                 <b-row>
