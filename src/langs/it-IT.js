@@ -35,6 +35,7 @@ export default {
         retrieve_list_failed: `C'è stato un problema nel recuperare la lista dei contenuti.`
     },
     content_editor: {
+        view_on_site: 'Mostra nel sito',
         summary_title: 'Titolo',
         summary_title_description: 'Una breve descrizione del contenuto.',
         summary_title_placeholder: 'Inserisci un titolo',
@@ -90,5 +91,10 @@ export default {
             short_name: 'Nome breve',
             create: 'Aggiungi organizzazione'
         }
+    },
+    scrapes_list: {
+        show_expired: 'Mostra scaduti',
+        delete_selected: 'Elimina i selezionati',
+        clear_selection: 'Deseleziona'
     }
 };

@@ -6,7 +6,7 @@
                     :href="$store.state.env === 'production' ? `https://www.unijobs.it/jobs/${id}` : `http://localhost:8080/jobs/${id}`"
                     size="sm"
                     variant="primary"
-                >View on site</b-btn>
+                >{{ $t('content_editor.view_on_site') }}</b-btn>
             </b-col>
         </b-row>
         <b-row v-if="content">

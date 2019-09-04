@@ -3,8 +3,9 @@
         <b-row>
             <b-col>
                 <b-form inline>
-                    <b-checkbox v-model="filterCriteria.showExpired">Show expired</b-checkbox>
-                    <b-btn v-show="toBeDeleted.length > 0" v-b-modal.deleteScrapeModal class="ml-3" size="sm" variant="danger">Delete selected ({{ toBeDeleted.length }})</b-btn>
+                    <b-checkbox v-model="filterCriteria.showExpired">{{ $t('scrapes_list.show_expired') }}</b-checkbox>
+                    <b-btn v-show="toBeDeleted.length > 0" v-b-modal.deleteScrapeModal class="ml-3" size="sm" variant="danger">{{ $t('scrapes_list.delete_selected') }} ({{ toBeDeleted.length }})</b-btn>
+                    <b-btn v-show="toBeDeleted.length > 0" class="ml-3" size="sm" @click="toBeDeleted = []">{{ $t('scrapes_list.clear_selection') }}</b-btn>
                 </b-form>
             </b-col>
             <b-col cols="1">

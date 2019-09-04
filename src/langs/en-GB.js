@@ -35,6 +35,7 @@ export default {
         retrieve_list_fail: 'There was a problem retrieving the list of contents.'
     },
     content_editor: {
+        view_on_site: 'View on site',
         summary_title: 'Summary title',
         summary_title_description: 'A title or a brief description of the content.',
         summary_title_placeholder: 'Enter a title',
@@ -91,5 +92,10 @@ export default {
             short_name: 'Short name',
             create: 'Create organization'
         }
+    },
+    scrapes_list: {
+        show_expired: 'Show expired',
+        delete_selected: 'Delete selected',
+        clear_selection: 'Clear selection'
     }
 };
