@@ -14,9 +14,9 @@
             <p v-show="organizationSearchQueryFetching || organizationSearchQueryDirty">{{ $t('content_meta.searching') }}</p>
             <b-list-group v-if="organizationSearchResults.length">
                 <b-list-group-item
-                    v-for="org in flattenForest(organizationSearchResults)"
-                    :key="org.organization_id"
-                    :active="thisOrganization.id === org.organization_id"
+                    v-for="org in organizationSearchResults"
+                    :key="org.id"
+                    :active="thisOrganization.id === org.id"
                     button
                     @click="thisOrganization = org">
                     {{ org.ancestors | formatPath }}
@@ -38,7 +38,6 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _debounce from 'lodash/debounce';
 import _merge from 'lodash/merge';
-import _omit from 'lodash/omit';
 
 export default {
     filters: {
@@ -104,17 +103,6 @@ export default {
                 // TODO Signal a problem with search.
             });
         }, 500),
-        flattenTree(node, path = []) {
-            let _path = [...path, _omit(node, 'children')];
-            if (node.children) {
-                return node.children.reduce((accumulator, child) => accumulator.concat(this.flattenTree(child, _path)), []);
-            }
-            return [_path];
-        },
-        flattenForest(forest) {
-            return forest.reduce((accumulator, node) => accumulator.concat(this.flattenTree(node)), [])
-                         .map(t => ({ organization_id: t[t.length - 1].id, ancestors: t }));
-        },
         async createOrganization() {
             const parentResponse = await this.$axios.get(`/api/organizations?q=${this.thisCandidate.parent_short_name}`)
                 .catch(error => {
