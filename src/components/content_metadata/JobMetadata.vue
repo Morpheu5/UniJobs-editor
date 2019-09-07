@@ -206,7 +206,7 @@ class JobMetadataData {
             contest_sector: this.contest_sector.value,
             scientific_sector: this.scientific_sector.value,
             job_title: this.job_title.value,
-            job_title_alt: this.job_title.value !== null ? void 0 : this.job_title_alt.value,
+            job_title_alt: this.job_title_alt.value,
             salary: this.salary.value,
             tax_status: this.tax_status.value,
             deadline: this.deadline.value,
