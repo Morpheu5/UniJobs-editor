@@ -5,6 +5,22 @@ import createPersistedState from 'vuex-persistedstate';
 
 Vue.use(Vuex);
 
+const scrapesList = {
+    namespaced: true,
+    state: {
+        showExpired: false,
+        perPage: 10
+    },
+    mutations: {
+        setShowExpired(state, showExpired) {
+            state.showExpired = showExpired;
+        },
+        setPerPage(state, perPage) {
+            state.perPage = perPage;
+        }
+    }
+};
+
 export default new Vuex.Store({
     plugins: [
         createPersistedState()
@@ -13,6 +29,9 @@ export default new Vuex.Store({
         user: null,
         locale: 'it-IT',
         env: process.env.NODE_ENV || 'production'
+    },
+    modules: {
+        scrapesList
     },
     mutations: {
         setUser(state, user) {

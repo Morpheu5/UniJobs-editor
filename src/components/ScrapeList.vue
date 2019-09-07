@@ -109,7 +109,6 @@ export default Vue.extend({
             toBeDeleted: [],
             currentPage: 1,
             totalRows: 0,
-            perPage: 10,
             filterCriteria: {
                 showExpired: false
             }
@@ -129,6 +128,14 @@ export default Vue.extend({
                 imported: job.imported,
                 content_id: job.content_id
             }));
+        },
+        perPage: {
+            get() {
+                return this.$store.state.scrapesList.perPage;
+            },
+            set(perPage) {
+                this.$store.commit('scrapesList/setPerPage', perPage);
+            }
         }
     },
 
