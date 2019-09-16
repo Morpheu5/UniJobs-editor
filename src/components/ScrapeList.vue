@@ -34,6 +34,7 @@
                 <b-table
                     id="scraps_table"
                     hover
+                    responsive
                     selectable
                     select-mode="range"
                     striped
@@ -49,6 +50,13 @@
                     @filtered="onFiltered"
                     @row-selected="onSelected"
                 >
+                    <template v-slot:table-colgroup="scope">
+                        <col
+                            v-for="field in scope.fields"
+                            :key="field.key"
+                            :class="field.key"
+                        >
+                    </template>
                     <b-btn slot="delete" slot-scope="data" size="sm" variant="danger" @click="toBeDeleted = [data.item]">
                         <fa :icon="['far', 'trash-alt']" size="sm" />
                     </b-btn>
@@ -78,12 +86,24 @@
 tr.expired {
     opacity: 0.5;
 }
+
+col.org {
+    width: 10%;
+}
+
+col.description {
+    min-width: 60%;
+}
+
+col.deadline {
+    width: 14%;
+}
 </style>
 
 <script>
 import Vue from 'vue';
 
-import _truncate from 'lodash/truncate';
+// import _truncate from 'lodash/truncate';
 import moment from 'moment-timezone';
 
 export default Vue.extend({
@@ -121,7 +141,7 @@ export default Vue.extend({
                 id: job._id,
                 rev: job._rev,
                 org: [ job.organization_id, job.organization_short_name ],
-                description: _truncate(job.description.it, { length: 100, separator: ' ' }),
+                description: job.description.it,
                 deadline: job.deadline,
                 analyzed: job.analyzed,
                 smelly: job.smelly,
