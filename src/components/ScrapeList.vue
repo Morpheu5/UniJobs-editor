@@ -57,9 +57,9 @@
                             :class="field.key"
                         >
                     </template>
-                    <b-btn slot="delete" slot-scope="data" size="sm" variant="danger" @click="toBeDeleted = [data.item]">
+                    <!-- <b-btn slot="delete" slot-scope="data" size="sm" variant="danger" @click="toBeDeleted = [data.item]">
                         <fa :icon="['far', 'trash-alt']" size="sm" />
-                    </b-btn>
+                    </b-btn> -->
                     <template slot="analyzed" slot-scope="data">
                         <fa v-if="data.value" :icon="['far', 'check-square']" size="sm" />
                         <fa v-else :icon="['far', 'square']" size="sm" />
@@ -117,7 +117,7 @@ export default Vue.extend({
         return {
             scraps: [],
             fields: [
-                { key: 'delete', label: '' },
+                // { key: 'delete', label: '' },
                 { key: 'analyzed', label: 'A' },
                 { key: 'smelly', label: 'S' },
                 { key: 'content_id', label: 'C' },
@@ -161,7 +161,12 @@ export default Vue.extend({
 
     async created() {
         const query = {
-            selector: {},
+            selector: {
+                $or: [
+                    { userDeleted: false},
+                    { userDeleted: { $exists: false } }
+                ]
+            },
             fields: ['_id', '_rev', 'description', 'organization_id', 'organization_short_name', 'deadline', 'scraped', 'analyzed', 'smelly', 'imported', 'content_id']
         };
         let { docs, bookmark } = await this.$couchdb.post('/_find', query)
@@ -188,8 +193,10 @@ export default Vue.extend({
     },
 
     methods: {
-        deleteScrape() {
-            const deleteRequests = this.toBeDeleted.map(item => this.$couchdb.delete(`${item.id}`, { params: { rev: item.rev } }));
+        async deleteScrape() {
+            const docsResponse = await this.$couchdb.post('_all_docs?include_docs=true', { keys: this.toBeDeleted.map(doc => doc.id) })
+            const docs = docsResponse.data.rows.map(row => ({ userDeleted: true, ...row.doc, _attachments: {} }));
+            const deleteRequests = docs.map(doc => this.$couchdb.put(`${doc._id}`, doc));
 
             Promise.all(deleteRequests)
                 .then(_responses => {
