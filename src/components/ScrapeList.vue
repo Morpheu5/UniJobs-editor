@@ -163,7 +163,7 @@ export default Vue.extend({
         const query = {
             selector: {
                 $or: [
-                    { userDeleted: false},
+                    { userDeleted: false },
                     { userDeleted: { $exists: false } }
                 ]
             },
@@ -194,7 +194,7 @@ export default Vue.extend({
 
     methods: {
         async deleteScrape() {
-            const docsResponse = await this.$couchdb.post('_all_docs?include_docs=true', { keys: this.toBeDeleted.map(doc => doc.id) })
+            const docsResponse = await this.$couchdb.post('_all_docs?include_docs=true', { keys: this.toBeDeleted.map(doc => doc.id) });
             const docs = docsResponse.data.rows.map(row => ({ userDeleted: true, ...row.doc, _attachments: {} }));
             const deleteRequests = docs.map(doc => this.$couchdb.put(`${doc._id}`, doc));
 

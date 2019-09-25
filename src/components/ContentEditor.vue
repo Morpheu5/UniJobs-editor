@@ -318,14 +318,23 @@ export default {
                     });
                 });
             const orgData = organizationResponse.data.filter(o => o.short_name === docData.organization_short_name)[0];
+            let bodyContent = { it: { content: '' }, en: { content: '' } };
+            if (typeof docData.full_text === 'string') {
+                bodyContent.it.content = docData.full_text;
+            } else if (typeof docData.full_text === 'object' && docData.full_text) {
+                bodyContent.it.content = docData.full_text.it;
+                bodyContent.en.content = docData.full_text.en;
+            }
+
             let content = {
                 content_type: 'job',
                 title: docData.description,
                 organization: orgData || {},
                 metadata: {
+                    published: true,
                     job_title_candidates: docData.job_title,
                     salary_candidates: docData.salary.map(s => s.replace('.', '')),
-                    tax_status: { lordo: 'gross', esentasse: 'tax-exempt', netto: 'net' }[docData.tax_status],
+                    tax_status: { lordo: 'gross', esentasse: 'tax-exempt', netto: 'net' }[docData.tax_status.trim] || 'gross',
                     contest_sector: docData.contest_sector,
                     scientific_sector: docData.scientific_sector,
                     organization_candidate: orgData ? null : { parent_short_name: docData.organization_id, short_name: docData.organization_short_name, name: docData.organization_name },
@@ -335,14 +344,7 @@ export default {
                     {
                         block_type: 'text',
                         order: 1,
-                        body: {
-                            it: {
-                                content: `${docData.full_text}\n\n[Bando completo](${docData.pdf_url})`
-                            },
-                            en: {
-                                content: ''
-                            }
-                        },
+                        body: bodyContent,
                         uuid: uuidv4()
                     }
                 ]

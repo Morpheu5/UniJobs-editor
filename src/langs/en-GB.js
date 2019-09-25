@@ -81,6 +81,7 @@ export default {
         application_deadline_timezone: "The time is shown in your browser's timezone, not Rome's",
         application_url: 'Application URL',
         application_url_placeholder: 'https://…',
+        'borsista': 'Scholar',
         'ricercatore-tipo-a': 'Researcher (type A)',
         'ricercatore-tipo-b': 'Senior Researcher (type B)',
         'professore-prima-fascia': 'Professor',

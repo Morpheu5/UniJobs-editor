@@ -80,6 +80,7 @@ export default {
         application_deadline_timezone: "L'orario è mostrato nel fuso orario del browser, non di Roma.",
         application_url: 'URL per fare domanda',
         application_url_placeholder: 'https://…',
+        'borsista': 'Borsista',
         'ricercatore-tipo-a': 'Ricercatore (tipo A)',
         'ricercatore-tipo-b': 'Ricercatore (tipo B)',
         'professore-prima-fascia': 'Professore Ordinario',

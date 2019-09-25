@@ -2,11 +2,11 @@
     <b-col>
         <b-card :class="block_data.validity" no-body class="field_container">
             <b-tabs card>
-                <b-tab v-for="l in availableLocales()" :key="`${block_data.uuid}-${l.code}`">
+                <b-tab v-for="l in availableLocales()" :key="`${block_data.uuid}-${l.code}`" @click="refresh">
                     <template slot="title">
                         {{ l.name }} <span v-show="!block_data.value.body[l.code] || block_data.value.body[l.code] == ''" class="missing">(missing)</span>
                     </template>
-                    <vue-simplemde v-model="block_data.value.body[l.code].content" :disabled="value.delete" :configs="mdeConfig" />
+                    <vue-simplemde ref="mde" v-model="block_data.value.body[l.code].content" :disabled="value.delete" :configs="mdeConfig" />
                 </b-tab>
             </b-tabs>
             <ul v-show="block_data.invalidFeedback" class="invalid_feedback">
@@ -54,6 +54,9 @@ export default {
             deep: true
         }
     },
+    mounted() {
+        this.refresh();
+    },
     methods: {
         validate() {
             if (Object.entries(this.block_data.value.body).some(e => e[1].content === '')) {
@@ -64,6 +67,13 @@ export default {
                 this.block_data.validity = 'valid';
                 this.block_data.invalidFeedback = [];
                 return true;
+            }
+        },
+        refresh() {
+            if (this.$refs['mde']) {
+                for (const e of this.$refs['mde']) {
+                    e.simplemde.codemirror.refresh();
+                }
             }
         }
     }
