@@ -384,10 +384,11 @@ export default {
                     .post('/api/contents', contentParams)
                     .then(async response => {
                         // Content created!
-                        this.importedDocument.imported = true;
-                        this.importedDocument.content_id = response.data.id;
-                        const res = await this.$couchdb.put(`/${this.importedDocument._id}`, this.importedDocument);
-                        console.log(res);
+                        if (this.importedDocument) {
+                            this.importedDocument.imported = true;
+                            this.importedDocument.content_id = response.data.id;
+                            await this.$couchdb.put(`/${this.importedDocument._id}`, this.importedDocument);
+                        }
                         this.$router.push({ path: `/contents/${response.data.id}/edit` });
                         this.$router.go();
                     }).catch(error => {
