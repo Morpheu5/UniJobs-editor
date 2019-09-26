@@ -192,7 +192,7 @@ class JobMetadataData {
         this.salary = new Input(data.salary || (data.salary_candidates && Array.isArray(data.salary_candidates) && data.salary_candidates.filter(s => s.indexOf(',') > -1)[0]) || '');
         this.tax_status = new Input(data.tax_status || '');
         this.deadline = new Input(data.deadline || new Date());
-        this.url = new Input(data.url || '');
+        this.url = new Input(data.url || this.spreadOverLocales({ content: '' }));
 
         this.import_type = data.import_type;
         this.job_title_candidates = data.job_title_candidates;

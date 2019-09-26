@@ -319,11 +319,29 @@ export default {
                 });
             const orgData = organizationResponse.data.filter(o => o.short_name === docData.organization_short_name)[0];
             let bodyContent = { it: { content: '' }, en: { content: '' } };
+            let pdfUrl;
+            if (typeof docData.pdf_url === 'string') {
+                pdfUrl = { it: docData.pdf_url, en: docData.pdf_url };
+            } else if (typeof docData.pdf_url === 'object' && docData.pdf_url) {
+                pdfUrl = { it: docData.pdf_url.it, en: docData.pdf_url.en };
+            }
             if (typeof docData.full_text === 'string') {
-                bodyContent.it.content = docData.full_text;
+                bodyContent.it.content = `${docData.full_text}\n\n### Ulteriori informazioni\n\nSi prega di vedere il [bando completo](${pdfUrl.it}).`;
             } else if (typeof docData.full_text === 'object' && docData.full_text) {
-                bodyContent.it.content = docData.full_text.it;
-                bodyContent.en.content = docData.full_text.en;
+                bodyContent.it.content = `${docData.full_text.it}\n\n### Ulteriori informazion\n\nSi prega di vedere il [bando completo](${pdfUrl.it}).`;
+                bodyContent.en.content = `${docData.full_text.en}\n\n### Further information\n\nPlease see the [full advert](${pdfUrl.en}).`;
+            }
+            let applicationUrl;
+            if (docData.application_url) {
+                applicationUrl = {
+                    it: { content: docData.application_url.it },
+                    en: { content: docData.application_url.en }
+                };
+            } else {
+                applicationUrl = {
+                    it: { content: pdfUrl.it },
+                    en: { content: pdfUrl.en }
+                };
             }
 
             let content = {
@@ -338,7 +356,8 @@ export default {
                     contest_sector: docData.contest_sector,
                     scientific_sector: docData.scientific_sector,
                     organization_candidate: orgData ? null : { parent_short_name: docData.organization_id, short_name: docData.organization_short_name, name: docData.organization_name },
-                    deadline: docData.deadline
+                    deadline: docData.deadline,
+                    url: applicationUrl
                 },
                 content_blocks: [
                     {
