@@ -81,6 +81,7 @@ export default {
         application_url: 'URL per fare domanda',
         application_url_placeholder: 'https://…',
         'borsista': 'Borsista',
+        'postdoc': 'Ricercatore Post Dottorato',
         'ricercatore-tipo-a': 'Ricercatore (tipo A)',
         'ricercatore-tipo-b': 'Ricercatore (tipo B)',
         'professore-prima-fascia': 'Professore Ordinario',

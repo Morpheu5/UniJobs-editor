@@ -82,6 +82,7 @@ export default {
         application_url: 'Application URL',
         application_url_placeholder: 'https://…',
         'borsista': 'Scholar',
+        'postdoc': 'Post-Doctoral Researcher',
         'ricercatore-tipo-a': 'Researcher (type A)',
         'ricercatore-tipo-b': 'Senior Researcher (type B)',
         'professore-prima-fascia': 'Professor',

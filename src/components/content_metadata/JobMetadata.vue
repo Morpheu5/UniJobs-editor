@@ -328,6 +328,7 @@ export default {
             job_title_options: [
                 { value: null, text: '' },
                 { value: 'borsista', text: this.$t('content_meta.borsista') },
+                { value: 'postdoc', text: this.$t('content_meta.postdoc') },
                 { value: 'ricercatore-tipo-a', text: this.$t('content_meta.ricercatore-tipo-a') },
                 { value: 'ricercatore-tipo-b', text: this.$t('content_meta.ricercatore-tipo-b') },
                 { value: 'professore-prima-fascia', text: this.$t('content_meta.professore-prima-fascia') },
