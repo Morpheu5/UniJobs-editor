@@ -17,9 +17,7 @@ import _startCase from 'lodash/startCase';
 import _cloneDeep from 'lodash/cloneDeep';
 import _capitalize from 'lodash/capitalize';
 
-import {
-    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Table, Tabs
-} from 'bootstrap-vue/es/components';
+import BootstrapVue from 'bootstrap-vue';
 
 import "bootstrap/scss/bootstrap.scss";
 import "bootstrap-vue/dist/bootstrap-vue.min.css";
@@ -78,12 +76,7 @@ library.add(
 Vue.config.productionTip = false;
 Vue.config.debug = true;
 
-const bootstrapComponents = [
-    Alert, Badge, Button, ButtonGroup, InputGroup, Card, Layout, Dropdown, Form, FormGroup, FormCheckbox, FormRadio, FormInput, FormTextarea, FormSelect, Link, ListGroup, Modal, Nav, Navbar, Pagination, PaginationNav, Table, Tabs
-];
-for (const component of bootstrapComponents) {
-    Vue.use(component);
-}
+Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 Vue.use(VueI18n);
 Vue.use(flatPickr);

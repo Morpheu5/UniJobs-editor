@@ -57,21 +57,26 @@
                             :class="field.key"
                         >
                     </template>
-                    <!-- <b-btn slot="delete" slot-scope="data" size="sm" variant="danger" @click="toBeDeleted = [data.item]">
-                        <fa :icon="['far', 'trash-alt']" size="sm" />
-                    </b-btn> -->
-                    <template slot="analyzed" slot-scope="data">
+                    <template v-slot:cell(analyzed)="data">
                         <fa v-if="data.value" :icon="['far', 'check-square']" size="sm" />
                         <fa v-else :icon="['far', 'square']" size="sm" />
                     </template>
-                    <template slot="smelly" slot-scope="data">
+                    <template v-slot:cell(smelly)="data">
                         <fa v-if="data.value" :icon="['far', 'check-square']" size="sm" />
                         <fa v-else :icon="['far', 'square']" size="sm" />
                     </template>
-                    <router-link slot="content_id" slot-scope="data" :to="`/contents/${data.value}/edit`">{{ data.value }}</router-link>
-                    <template slot="org" slot-scope="data">{{ data.value[0] }} &raquo; {{ data.value[1] }}</template>
-                    <router-link slot="description" slot-scope="data" :to="`/contents/job/import/${data.item.id}`">{{ data.value }}</router-link>
-                    <template slot="deadline" slot-scope="data">{{ data.value | deadline }}</template>
+                    <template v-slot:cell(content_id)="data">
+                        <router-link :to="`/contents/${data.value}/edit`">{{ data.value }}</router-link>
+                    </template>
+                    <template v-slot:cell(org)="data">
+                        {{ data.value[0] }} &raquo; {{ data.value[1] }}
+                    </template>
+                    <template v-slot:cell(description)="data">
+                        <router-link :to="`/contents/job/import/${data.item.id}`">{{ data.value }}</router-link>
+                    </template>
+                    <template v-slot:cell(deadline)="data">
+                        {{ data.value | deadline }}
+                    </template>
                 </b-table>
             </b-col>
         </b-row>
@@ -117,7 +122,6 @@ export default Vue.extend({
         return {
             scraps: [],
             fields: [
-                // { key: 'delete', label: '' },
                 { key: 'analyzed', label: 'A' },
                 { key: 'smelly', label: 'S' },
                 { key: 'content_id', label: 'C' },
