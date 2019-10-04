@@ -326,10 +326,10 @@ export default {
                 pdfUrl = { it: docData.pdf_url.it, en: docData.pdf_url.en };
             }
             if (typeof docData.full_text === 'string') {
-                bodyContent.it.content = `${docData.full_text}\n\n### Ulteriori informazioni\n\nSi prega di vedere il [bando completo](${pdfUrl.it}).`;
+                bodyContent.it.content = `${docData.full_text}\n\n### Ulteriori informazioni\n\nSi prega di vedere il [bando ufficiale](${pdfUrl.it}).`;
             } else if (typeof docData.full_text === 'object' && docData.full_text) {
-                bodyContent.it.content = `${docData.full_text.it}\n\n### Ulteriori informazion\n\nSi prega di vedere il [bando completo](${pdfUrl.it}).`;
-                bodyContent.en.content = `${docData.full_text.en}\n\n### Further information\n\nPlease see the [full advert](${pdfUrl.en}).`;
+                bodyContent.it.content = `${docData.full_text.it}\n\n### Ulteriori informazioni\n\nSi prega di vedere il [bando ufficiale](${pdfUrl.it}).`;
+                bodyContent.en.content = `${docData.full_text.en}\n\n### Further information\n\nPlease see the [official announcement](${pdfUrl.en}).`;
             }
             let applicationUrl;
             if (docData.application_url) {
@@ -351,7 +351,10 @@ export default {
                 metadata: {
                     published: true,
                     job_title_candidates: docData.job_title,
+                    job_title: '',
+                    job_title_alt: {},
                     salary_candidates: docData.salary.map(s => s.replace('.', '')),
+                    salary: '',
                     tax_status: { lordo: 'gross', esentasse: 'tax-exempt', netto: 'net' }[docData.tax_status.trim] || 'gross',
                     contest_sector: docData.contest_sector,
                     scientific_sector: docData.scientific_sector,
