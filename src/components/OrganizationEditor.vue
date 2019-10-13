@@ -50,13 +50,6 @@
                             </div>
                         </b-form-group>
                     </div>
-                    <!-- <file-pond
-                        ref="pond"
-                        name="test"
-                        label-idle="Drop shit here..."
-                        :server="'http://localhost:3000/api/organizations/5/logo'"
-                        :files="myFiles"
-                    /> -->
                 </b-col>
             </b-row>
             <b-row>

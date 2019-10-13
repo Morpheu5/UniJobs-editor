@@ -11,9 +11,6 @@ import 'flatpickr/dist/themes/light.css';
 import VueSimplemde from 'vue-simplemde';
 import {} from 'simplemde/dist/simplemde.min.css';
 
-import vueFilePond from 'vue-filepond';
-import 'filepond/dist/filepond.min.css';
-
 import axios from "axios";
 
 import _startCase from 'lodash/startCase';
@@ -86,9 +83,6 @@ Vue.use(VueRouter);
 Vue.use(VueI18n);
 Vue.use(flatPickr);
 Vue.component('vue-simplemde', VueSimplemde);
-
-const FilePond = vueFilePond();
-Vue.component('file-pond', FilePond);
 
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);
