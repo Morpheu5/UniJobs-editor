@@ -91,7 +91,7 @@ Vue.component('fa', FontAwesomeIcon);
 
 const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
 Vue.prototype.$apiBaseUrl = API_URL;
-Vue.prototype.$cdnBaseUrl = API_URL;
+Vue.prototype.$cdnBaseUrl = API_URL + '/api';
 
 // Configure axios so we can use this.$axios
 let axiosObject = axios.create({
