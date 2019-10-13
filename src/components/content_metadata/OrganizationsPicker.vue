@@ -88,7 +88,7 @@ export default {
             let queryArray = this.organizationSearchQuery.split(/[^a-zA-Z0-9]/).filter(w => w !== '');
 
             this.$axios
-            .get(`/api/organizations?q=${queryArray.join(' ')}`)
+            .get(`/organizations?q=${queryArray.join(' ')}`)
             .then(response => {
                 this.organizationSearchQueryDirty = false;
                 this.organizationSearchQueryFetching = false;
@@ -104,7 +104,7 @@ export default {
             });
         }, 500),
         async createOrganization() {
-            const parentResponse = await this.$axios.get(`/api/organizations?q=${this.thisCandidate.parent_short_name}`)
+            const parentResponse = await this.$axios.get(`/organizations?q=${this.thisCandidate.parent_short_name}`)
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
@@ -124,7 +124,7 @@ export default {
                 name: this.thisCandidate.name,
                 short_name: this.thisCandidate.short_name
             };
-            this.$axios.post(`/api/organizations`, { data: newOrg })
+            this.$axios.post(`/organizations`, { data: newOrg })
                 .then(response => {
                     this.thisOrganization = response.data;
                     this.thisCandidate = null;

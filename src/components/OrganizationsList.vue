@@ -15,7 +15,7 @@ export default {
         };
     },
     mounted() {
-        this.$axios.get('/api/organizations/tree')
+        this.$axios.get('/organizations/tree')
         .then(result => {
             this.organizations = result.data;
         });

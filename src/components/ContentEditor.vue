@@ -275,7 +275,7 @@ export default {
         },
         fetchContent() {
             return this.$axios
-                .get(`/api/contents/${this.id}`)
+                .get(`/contents/${this.id}`)
                 .then(response => {
                     // Add the "delete" property on the fly to the response data before assigning it
                     // to the component, otherwise stuff will not bind to it.
@@ -310,7 +310,7 @@ export default {
             const docData = documentResponse.data;
             this.importedDocument = docData;
             const organizationResponse = await this.$axios
-                .get(`/api/organizations?q=${docData.organization_id}%20${docData.organization_short_name}`)
+                .get(`/organizations?q=${docData.organization_id}%20${docData.organization_short_name}`)
                 .catch(error => {
                     this.$root.$emit("global-notification", {
                         type: "danger",
@@ -403,7 +403,7 @@ export default {
             if (this.id === 'new') {
                 // Create (POST)
                 this.$axios
-                    .post('/api/contents', contentParams)
+                    .post('/contents', contentParams)
                     .then(async response => {
                         // Content created!
                         if (this.importedDocument) {
@@ -423,7 +423,7 @@ export default {
             } else if (this.content.document.id) {
                 // Edit (PATCH)
                 this.$axios
-                    .patch(`/api/contents/${this.content.document.id}`, contentParams)
+                    .patch(`/contents/${this.content.document.id}`, contentParams)
                     .then(_response => {
                         // Content edited!
                         this.fetchContent()
@@ -450,7 +450,7 @@ export default {
         },
         deleteContent() {
             this.$axios
-                .delete(`/api/contents/${this.content.document.id}`)
+                .delete(`/contents/${this.content.document.id}`)
                 .then(_response => {
                 this.$router.push({ path: '/contents' });
                     this.$root.$emit("global-notification", {

@@ -155,12 +155,12 @@ export default {
         if (this.id === 'new') {
 
         } else {
-            await this.$axios.get(`/api/organizations/${this.id}`)
+            await this.$axios.get(`/organizations/${this.id}`)
             .then(response => {
                 this.organization = response.data;
             });
             if (this.organization.ancestors.length > 1) {
-                await this.$axios.get(`/api/organizations/${this.organization.ancestors[this.organization.ancestors.length - 2].id}`)
+                await this.$axios.get(`/organizations/${this.organization.ancestors[this.organization.ancestors.length - 2].id}`)
                 .then(response => {
                     this.parentOrganization.value = { ...this.parentOrganization.value, ...response.data };
                     this.orgPickerUpdateKey++;
@@ -197,7 +197,7 @@ export default {
         uploadLogo() {
             // let data = new FormData();
             // data.append('data[logo]', this.logoFile);
-            // this.$axios.patch(`/api/organizations/${this.id}`)
+            // this.$axios.patch(`/organizations/${this.id}`)
             // .then(respose => {
             //     console.log('SUCCESS' + response);
             // })
@@ -208,7 +208,7 @@ export default {
         deleteLogo() {
             let data = new FormData();
             data.append('data[remove_logo]', true);
-            this.$axios.patch(`/api/organizations/${this.id}`, data)
+            this.$axios.patch(`/organizations/${this.id}`, data)
             .then(response => {
                 this.logoFile = null;
                 this.organization = response.data;
@@ -235,7 +235,7 @@ export default {
             if (this.logoFile) {
                 data.append('data[logo]', this.logoFile);
             }
-            this.$axios.patch(`/api/organizations/${this.organization.id}`, data)
+            this.$axios.patch(`/organizations/${this.organization.id}`, data)
             .then(response => {
                 this.logoFile = null;
                 this.organization = response.data;

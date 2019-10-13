@@ -78,7 +78,7 @@ export default {
     },
     created() {
         this.$axios
-            .get('/api/users/whoami')
+            .get('/users/whoami')
             .then(response => {
                 this.current_user = response.data;
                 this.$store.commit('setUser', response.data);
@@ -92,7 +92,7 @@ export default {
     methods: {
         logout() {
             this.$axios
-                .post('/api/logout')
+                .post('/logout')
                 .then(_response => {
                     localStorage.removeItem('unijobs_magic_token');
                     this.$router.push({ path: '/login' });

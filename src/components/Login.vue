@@ -62,7 +62,7 @@ export default {
     methods: {
         doTheLogin() {
             this.$axios.post(
-                '/api/login',
+                '/login',
                 { email: this.email, password: this.password }
             ).then(response => {
                 if (response.data.token) {
