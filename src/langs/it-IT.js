@@ -94,9 +94,33 @@ export default {
             create: 'Aggiungi organizzazione'
         }
     },
+    organizations: {
+        name: 'Nome',
+        name_description: 'La versione lunga del nome di questa organizzazione',
+        short_name: 'Nome breve',
+        short_name_description: 'La versione breve del nome di questa organizzazione',
+        part_of: 'Fa capo a...',
+        part_of_description: "L'organizzazione a cui fa capo questa organizzazione",
+        logo_label: 'Logo',
+        logo_description: "Immagine rappresentativa dell'organizzazione (es. lo stemma, il logo...)",
+        delete_modal_title: 'Cancellare questa organizzazione?',
+        delete_modal: `
+            <p><strong>Questa azione è permanente</strong>.</p>
+            <p>Se confermi, <strong>non sarà possibile</strong> recuperare l'organizzazione cancellata.</p>
+            <p class="my-4 text-danger"><strong>Confermi di voler cancellare questa organizzazione?</strong></p>
+        `,
+        logo_upload_failed: "C'è stato un problema a caricare il logo.",
+        logo_delete_success: 'Logo cancellato correttamente',
+        logo_delete_failure: "C'è stato un problema a cancellare il logo.",
+        save_organization_success: 'Organizzazione salvata correttamente.',
+        save_organization_failed: "C'è stato un problema a salvare l'organizzazione."
+    },
     scrapes_list: {
         show_expired: 'Mostra scaduti',
         delete_selected: 'Elimina i selezionati',
         clear_selection: 'Deseleziona'
+    },
+    validation_feedback: {
+        missing_field: 'Questo campo è necessario'
     }
 };

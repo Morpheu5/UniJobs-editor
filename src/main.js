@@ -11,6 +11,9 @@ import 'flatpickr/dist/themes/light.css';
 import VueSimplemde from 'vue-simplemde';
 import {} from 'simplemde/dist/simplemde.min.css';
 
+import vueFilePond from 'vue-filepond';
+import 'filepond/dist/filepond.min.css';
+
 import axios from "axios";
 
 import _startCase from 'lodash/startCase';
@@ -31,6 +34,8 @@ import MainContainer from "@/components/MainContainer.vue";
 import ContentsList from "@/components/ContentsList.vue";
 import ContentEditor from "@/components/ContentEditor.vue";
 import ScrapeList from "@/components/ScrapeList.vue";
+import OrganizationsList from "@/components/OrganizationsList.vue";
+import OrganizationEditor from "@/components/OrganizationEditor.vue";
 
 import NotFoundComponent from "@/components/NotFoundComponent.vue";
 
@@ -82,14 +87,21 @@ Vue.use(VueI18n);
 Vue.use(flatPickr);
 Vue.component('vue-simplemde', VueSimplemde);
 
+const FilePond = vueFilePond();
+Vue.component('file-pond', FilePond);
+
 // A bit annoying but hey...
 Vue.component("TextContentBlock", TextContentBlock);
 
 Vue.component('fa', FontAwesomeIcon);
 
+const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000';
+Vue.prototype.$apiBaseUrl = API_URL;
+Vue.prototype.$cdnBaseUrl = API_URL;
+
 // Configure axios so we can use this.$axios
 let axiosObject = axios.create({
-    baseURL: process.env.VUE_APP_API_URL || 'http://localhost:3000',
+    baseURL: API_URL,
     withCredentials: true
 });
 axiosObject.interceptors.request.use(function(config) {
@@ -137,6 +149,8 @@ const routes = [
         redirect: '/dashboard',
         children: [
             { path: "dashboard", component: Dashboard },
+            { path: "organizations", component: OrganizationsList },
+            { path: "organizations/:id", component: OrganizationEditor, props: true },
             { path: "contents", component: ContentsList },
             { path: "contents/:content_type/new", component: ContentEditor, props: route => ({ id: "new", content_type: route.params['content_type'] }) },
             { path: "contents/job/import/:import_id", component: ContentEditor, props: route => ({ id: "new", content_type: 'job', import_id: route.params['import_id'] }) },

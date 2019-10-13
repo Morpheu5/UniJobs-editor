@@ -95,9 +95,33 @@ export default {
             create: 'Create organization'
         }
     },
+    organizations: {
+        name: 'Full name',
+        name_description: 'The long-form name of this organization',
+        short_name: 'Short name',
+        short_name_description: 'The short-form name of this organization',
+        part_of: 'Part of...',
+        part_of_description: "The organization of which this organization is part",
+        logo_label: 'Logo',
+        logo_description: "Image that represents the organization (e.g., crest, logo...)",
+        delete_modal_title: 'Delete this organization?',
+        delete_modal: `
+            <p><strong>This action is permanent</strong>.</p>
+            <p>If you confirm, you <strong>will not</strong> be able to recover the organization.</p>
+            <p class="my-4 text-danger"><strong>Are you sure you want to delete this organization?</strong></p>
+        `,
+        logo_upload_failed: "There was a problem uploading the logo.",
+        logo_delete_success: 'Logo deleted correctly',
+        logo_delete_failure: "There was a problem deleting the logo.",
+        save_organization_success: "Organization saved correctly.",
+        save_organization_failed: "There was a problem saving this organization."
+    },
     scrapes_list: {
         show_expired: 'Show expired',
         delete_selected: 'Delete selected',
         clear_selection: 'Clear selection'
+    },
+    validation_feedback: {
+        missing_field: 'This field is necessary'
     }
 };

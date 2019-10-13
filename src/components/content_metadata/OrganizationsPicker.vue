@@ -126,7 +126,6 @@ export default {
             };
             this.$axios.post(`/api/organizations`, { data: newOrg })
                 .then(response => {
-                    // debugger;
                     this.thisOrganization = response.data;
                     this.thisCandidate = null;
                     // This key-changing forced update is nasty and should not be necessary, but it is :(
