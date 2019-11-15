@@ -106,6 +106,9 @@ export default {
             }
         }
     },
+    mounted() {
+        this.$emit('input', this.metadata.document);
+    },
     methods: {
         validate() {
             return this.metadata.validate();
