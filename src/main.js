@@ -9,7 +9,8 @@ import 'flatpickr/dist/flatpickr.css';
 import 'flatpickr/dist/themes/light.css';
 
 import VueSimplemde from 'vue-simplemde';
-import {} from 'simplemde/dist/simplemde.min.css';
+// import {} from 'simplemde/dist/simplemde.min.css';
+import {} from 'easymde/dist/easymde.min.css';
 
 import axios from "axios";
 

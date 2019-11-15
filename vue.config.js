@@ -8,5 +8,7 @@ module.exports = {
         : `webpack-yourCode:///${info.resourcePath}`;
 
         config.output.devtoolFallbackModuleFilenameTemplate = 'webpack:///[resource-path]?[hash]';
+
+        config.resolve.alias.simplemde = 'easymde';
     }
 };
