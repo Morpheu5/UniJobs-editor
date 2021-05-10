@@ -17,7 +17,7 @@
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
     "easymde": "^2.11.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "moment": "^2.27.0",
     "moment-timezone": "^0.5.31",
     "vue": "^2.6.12",
